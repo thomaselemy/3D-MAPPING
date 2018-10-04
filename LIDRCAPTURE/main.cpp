@@ -47,7 +47,7 @@
 
 using namespace std;
 
-#define LINE_LEN 16
+constexpr auto LINE_LEN = 16;
 
 #pragma region "GLOBAL VARIABLES"
 /*used to store hex values in the two hex conversion functions*/
