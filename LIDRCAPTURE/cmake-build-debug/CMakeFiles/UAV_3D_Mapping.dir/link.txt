@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/UAV_3D_Mapping.dir/main.cpp.o  -o UAV_3D_Mapping -Wl,-Bstatic -lpcap -Wl,-Bdynamic -lpcap -ldl 

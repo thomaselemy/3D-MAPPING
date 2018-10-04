@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/thomas/Desktop/UAV_3D_Mapping3unfuck/main.cpp
+stdlib.h
+-
+stdio.h
+-
+iostream
+-
+iomanip
+-
+sstream
+-
+string
+-
+pcap.h
+-
+fstream
+-
+cmath
+-
+cstring
+-
+time.h
+-
+
