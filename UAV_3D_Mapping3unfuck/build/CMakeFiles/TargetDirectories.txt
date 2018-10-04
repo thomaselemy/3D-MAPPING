@@ -1,3 +1,0 @@
-/media/thomas/UBUNTU 18_0/UNFKED_UAV_3D_MAPPING/UAV_3D_Mapping/build/CMakeFiles/rebuild_cache.dir
-/media/thomas/UBUNTU 18_0/UNFKED_UAV_3D_MAPPING/UAV_3D_Mapping/build/CMakeFiles/UAV_3D_Mapping.dir
-/media/thomas/UBUNTU 18_0/UNFKED_UAV_3D_MAPPING/UAV_3D_Mapping/build/CMakeFiles/edit_cache.dir

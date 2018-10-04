@@ -1,3 +1,0 @@
-/home/thomas/Desktop/UAV_3D_Mapping3unfuck/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/thomas/Desktop/UAV_3D_Mapping3unfuck/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/thomas/Desktop/UAV_3D_Mapping3unfuck/cmake-build-debug/CMakeFiles/UAV_3D_Mapping.dir
