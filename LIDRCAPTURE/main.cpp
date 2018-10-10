@@ -44,9 +44,6 @@
 #include <cstring> // unused?
 #include <ctime> // unused
 
-//UNUSED
-constexpr auto LINE_LEN = 16;
-
 //TODO: Move to a header file or (after refactoring out some other functions) move definitions 
 #pragma region "FUNCTION PROTOTYPES" 
 /* Takes in the 2 byte values for the azimuth or distance value and returns the calculated value as an integer*/
@@ -55,56 +52,36 @@ int TwoByteHexConv(int);
 int FourByteHexConv(int);
 #pragma endregion
 
-int main(int argc, char *argv[]) {
-	using namespace std;
+struct SetupResults {
+	bool goodStart = true;
+	pcap_t* fp;
+};
 
-	//TODO: Move variables to where they are used.
-	int curByte = 0;	// The current byte being processed
-	int nextByte = 0;	//used in conjunction with curByte
-	int blockCounter = 0;	//counter for number of data blocks counted in a packet
-	int dataBlockStatus = 0;	//used to facilitate
-	/*stores the azimuth value for current block being processed*/
-	int azimuth = 0;
-	/*temporarily stores the distance value for the current block being processed. Each of the 32 values per block get printed immediately.*/
-	int distance = 0;
-	/*counter for the number of distance and reflectivity data points processed.*/
-	int ctr = 0;
-	/*stores the time stamp*/
-	int timeStamp = 0;
-	bool flag = false;
-	int reflFlag = 0;
-	int gpsFlag = 0;
-	int gpsHeader = false; //WHAT?
-	int gpsByte = 0;
-	int wait = 0; //seconds before start
-	string cur;
-
-#pragma region "PACKET CAPTURE CODE FROM WINPCAP" 
-	pcap_if_t *alldevs, *d;
-	pcap_t *fp;
-	u_int inum, i = 0;
+SetupResults setup(int arg_count, char* args[]){
+	
+	SetupResults results;
+	
+	pcap_if_t *alldevs;
 	char errbuf[PCAP_ERRBUF_SIZE];
-	int res;
-	struct pcap_pkthdr *header;
-	const u_char *pkt_data;
-
-	//TODO: Move setup work to a function?
+	
 	printf("pktdump_ex: prints the packets of the network using WinPcap.\n");
 	printf("   Usage: pktdump_ex [-s source]\n\n"
 		   "   Examples:\n"
 		   "      pktdump_ex -s file://c:/temp/file.acp\n"
 		   "      pktdump_ex -s rpcap://\\Device\\NPF_{C8736017-F3C3-4373-94AC-9A34B7DAD998}\n\n");
-
-	if(argc < 3) {
+	
+	if(arg_count < 3) {
 		printf("\nNo adapter selected: printing the device list:\n");
 		/* The user didn't provide a packet source: Retrieve the local device list */
 		if(pcap_findalldevs(&alldevs, errbuf) == -1) {
 			fprintf(stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
-			return -1;
+			results.goodStart = false;
+			return results;
 		}
 
+		unsigned int i = 0;
 		/* Print the list */
-		for(d = alldevs; d; d = d->next) {
+		for(auto d = alldevs; d; d = d->next) {
 			printf("%d. %s\n    ", ++i, d->name);
 
 			if(d->description) {
@@ -116,9 +93,11 @@ int main(int argc, char *argv[]) {
 
 		if(i == 0) {
 			fprintf(stderr, "No interfaces found! Exiting.\n");
-			return -1;
+			results.goodStart = false;
+			return results;
 		}
 
+		unsigned int inum = 0;
 		printf("Enter the interface number (1-%d):", i);
 		scanf("%d", &inum);
 
@@ -127,14 +106,15 @@ int main(int argc, char *argv[]) {
 
 			/* Free the device list */
 			pcap_freealldevs(alldevs);
-			return -1;
+			results.goodStart = false;
+			return results;
 		}
 
 		/* Jump to the selected adapter */
-		for(d = alldevs, i = 0; i < inum - 1; d = d->next, i++);
+		for(d = alldevs; i < inum - 1; d = d->next, i++);
 		/* Open the device */
 		printf(d->name);
-		if((fp = pcap_open_live(d->name,
+		if((results.fp = pcap_open_live(d->name,
 								100 /*snaplen*/,
 								1,
 								20 /*read timeout*/,
@@ -142,34 +122,63 @@ int main(int argc, char *argv[]) {
 			) == NULL) {
 			printf(errbuf);
 			fprintf(stderr, "\nError opening adapter\n");
-			return -1;
+			results.goodStart = false;
+			return results;
 		}
 	} else {
 		// Do not check for the switch type ('-s')
-		if((fp = pcap_open_live(argv[2],
+		if((results.fp = pcap_open_live(argv[2],
 								100 /*snaplen*/,
 								1,
 								20 /*read timeout*/,
 								errbuf)
 			) == NULL) {
 			fprintf(stderr, "\nError opening source: %s\n", errbuf);
-			return -1;
+			results.goodStart = false;
+			return results;
 		}
 	}
-#pragma endregion
 
+	results.goodStart = true;
+	return results;
+}
+
+
+int main(int argc, char *argv[]) {
+	using namespace std;
+	
+	auto setupRes = setup(argc, argv);
+	
+	//If the setup is bad, kill now
+	if (!setupRes.goodStart) { 
+		return -1;
+	}
+	
+	/*stores the azimuth value for current block being processed*/
+	int azimuth = 0;
+	
 	/*Declaration and initialization of the output file that we will be writing to and the input file we will be reading settings from.*/
 	ofstream capFile("LIDAR_data.txt");
 	printf("\n\nvx %i\n\n", azimuth);
 
-	while((res = pcap_next_ex(fp, &header, &pkt_data)) >= 0) {
+	struct pcap_pkthdr *header;
+	const u_char *pkt_data;
+	
+	int dataBlockStatus = 0;	//used to facilitate
+	int blockCounter = 0; //counter for number of data blocks counted in a packet
+	/*counter for the number of distance and reflectivity data points processed.*/
+	int ctr = 0;
+	bool flag = false;
+	bool gpsHeader = false;
+	int gpsByte = 0;
+	while((auto res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
 		if(res == 0) //if there is a timeout, continue to the next loop
 			continue;
 
 		//TODO: Extract to a function
 		for(int i = 1; i < (header->caplen + 1); i++) {
-			curByte = pkt_data[i - 1];
-			nextByte = pkt_data[i];
+			auto curByte = pkt_data[i - 1];	// The current byte being processed
+			auto nextByte = pkt_data[i];	//used in conjunction with curByte
 
 			switch(dataBlockStatus) {
 				case 0:	//0xFFEE has not been found, GPS sentence has not been found
@@ -202,7 +211,8 @@ int main(int argc, char *argv[]) {
 							//3 bytes per data point * 32 data points = 96 bytes total. this will be used for the logic.
 
 					if(ctr % 3 != 0) {
-						distance = 2 * TwoByteHexConv(curByte); //multiplied by 2 because the precision is down to 2 millimeters
+						/*temporarily stores the distance value for the current block being processed. Each of the 32 values per block get printed immediately.*/
+						auto distance = 2 * TwoByteHexConv(curByte); //multiplied by 2 because the precision is down to 2 millimeters
 						if(distance > -1) {
 							capFile << " " << setw(10) << distance;
 						}
@@ -236,7 +246,7 @@ int main(int argc, char *argv[]) {
 					}
 					break;
 				case 3:	//all 12 blocks in this packet have been read, now process the timestamp and reset dataBlockStatus
-					timeStamp = FourByteHexConv(curByte);
+					auto timeStamp = FourByteHexConv(curByte);
 
 					if(timeStamp != -1) {
 						capFile << endl << "time= " << timeStamp;
@@ -252,16 +262,14 @@ int main(int argc, char *argv[]) {
 						capFile << "GPS= $G" << flush;
 						gpsHeader = true;
 						gpsByte = 84;
+					} else if(gpsByte > 0) {
+						capFile << static_cast<char>(cB) << flush;
+						gpsByte--;
 					} else {
-						if(gpsByte > 0) {
-							capFile << static_cast<char>(cB) << flush;
-							gpsByte--;
-						} else {
-							gpsHeader = false;
-							dataBlockStatus = 0;
-						}
+						gpsHeader = false;
+						dataBlockStatus = 0;
 					}
-
+				
 					break;
 			}
 		}
