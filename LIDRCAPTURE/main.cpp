@@ -128,7 +128,7 @@ SetupResults setup(int arg_count, char* args[]){
 		}
 	} else {
 		// Do not check for the switch type ('-s')
-		if((results.fp = pcap_open_live(argv[2],
+		if((results.fp = pcap_open_live(args[2],
 								100 /*snaplen*/,
 								1,
 								20 /*read timeout*/,
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
 	bool flag = false;
 	bool gpsHeader = false;
 	int gpsByte = 0;
-	while((auto res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
+	while((int res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
 		if(res == 0) //if there is a timeout, continue to the next loop
 			continue;
 
