@@ -35,7 +35,7 @@
 #ifndef lib_pcap_pcap_h
 #define lib_pcap_pcap_h
 
-#include <pcap/export-defs.h>
+#include "export-defs.h"
 
 #if defined(_WIN32)
   #include <pcap-stdinc.h>
@@ -48,7 +48,7 @@
 #endif /* _WIN32/MSDOS/UN*X */
 
 #ifndef PCAP_DONT_INCLUDE_PCAP_BPF_H
-#include <pcap/bpf.h>
+#include "bpf.h"
 #endif
 
 #include <stdio.h>

@@ -31,7 +31,7 @@
 *
 */
 
-#include <pcap.h>
+#include "headers/pcap.h"
 //Standard library
 #include <cstdlib>
 #include <cstdio>
@@ -44,12 +44,12 @@
 #include <cstring> // unused?
 #include <ctime> // unused
 
-//TODO: Move to a header file or (after refactoring out some other functions) move definitions 
-#pragma region "FUNCTION PROTOTYPES" 
+//TODO: Move to a header file or (after refactoring out some other functions) move definitions
+#pragma region "FUNCTION PROTOTYPES"
 /* Takes in the 2 byte values for the azimuth or distance value and returns the calculated value as an integer*/
-int TwoByteHexConv(int);
+int TwoByteHexConv (int);
 /* Takes in the 4 byte values for the time stamp and returns the calculated value as an integer*/
-int FourByteHexConv(int);
+int FourByteHexConv (int);
 #pragma endregion
 
 struct SetupResults {
@@ -57,24 +57,23 @@ struct SetupResults {
 	pcap_t* fp;
 };
 
-SetupResults setup(int arg_count, char* args[]){
-	
+SetupResults setup (int arg_count, char* args[ ]) {
 	SetupResults results;
-	
+
 	pcap_if_t *alldevs;
 	char errbuf[PCAP_ERRBUF_SIZE];
-	
-	printf("pktdump_ex: prints the packets of the network using WinPcap.\n");
-	printf("   Usage: pktdump_ex [-s source]\n\n"
-		   "   Examples:\n"
-		   "      pktdump_ex -s file://c:/temp/file.acp\n"
-		   "      pktdump_ex -s rpcap://\\Device\\NPF_{C8736017-F3C3-4373-94AC-9A34B7DAD998}\n\n");
-	
-	if(arg_count < 3) {
-		printf("\nNo adapter selected: printing the device list:\n");
+
+	printf ("pktdump_ex: prints the packets of the network using WinPcap.\n");
+	printf ("   Usage: pktdump_ex [-s source]\n\n"
+			"   Examples:\n"
+			"      pktdump_ex -s file://c:/temp/file.acp\n"
+			"      pktdump_ex -s rpcap://\\Device\\NPF_{C8736017-F3C3-4373-94AC-9A34B7DAD998}\n\n");
+
+	if (arg_count < 3) {
+		printf ("\nNo adapter selected: printing the device list:\n");
 		/* The user didn't provide a packet source: Retrieve the local device list */
-		if(pcap_findalldevs(&alldevs, errbuf) == -1) {
-			fprintf(stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
+		if (pcap_findalldevs (&alldevs, errbuf) == -1) {
+			fprintf (stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
 			results.goodStart = false;
 			return results;
 		}
@@ -82,59 +81,59 @@ SetupResults setup(int arg_count, char* args[]){
 		unsigned int i = 0;
 		/* Print the list */
 		auto d = alldevs;
-		for(; d; d = d->next) {
-			printf("%d. %s\n    ", ++i, d->name);
+		for (; d; d = d->next) {
+			printf ("%d. %s\n    ", ++i, d->name);
 
-			if(d->description) {
-				printf(" (%s)\n", d->description);
+			if (d->description) {
+				printf (" (%s)\n", d->description);
 			} else {
-				printf(" (No description available)\n");
+				printf (" (No description available)\n");
 			}
 		}
 
-		if(i == 0) {
-			fprintf(stderr, "No interfaces found! Exiting.\n");
+		if (i == 0) {
+			fprintf (stderr, "No interfaces found! Exiting.\n");
 			results.goodStart = false;
 			return results;
 		}
 
 		unsigned int inum = 0;
-		printf("Enter the interface number (1-%d):", i);
-		scanf("%d", &inum);
+		printf ("Enter the interface number (1-%d):", i);
+		scanf ("%d", &inum);
 
-		if(inum < 1 || inum > i) {
-			printf("\nInterface number out of range.\n");
+		if (inum < 1 || inum > i) {
+			printf ("\nInterface number out of range.\n");
 
 			/* Free the device list */
-			pcap_freealldevs(alldevs);
+			pcap_freealldevs (alldevs);
 			results.goodStart = false;
 			return results;
 		}
 
 		/* Jump to the selected adapter */
-		for(d = alldevs; i < inum - 1; d = d->next, i++);
+		for (d = alldevs; i < inum - 1; d = d->next, i++);
 		/* Open the device */
-		printf(d->name);
-		if((results.fp = pcap_open_live(d->name,
-								100 /*snaplen*/,
-								1,
-								20 /*read timeout*/,
-								errbuf)
-			) == NULL) {
-			printf(errbuf);
-			fprintf(stderr, "\nError opening adapter\n");
+		printf (d->name);
+		if (( results.fp = pcap_open_live (d->name,
+										   100 /*snaplen*/,
+										   1,
+										   20 /*read timeout*/,
+										   errbuf)
+			 ) == NULL) {
+			printf (errbuf);
+			fprintf (stderr, "\nError opening adapter\n");
 			results.goodStart = false;
 			return results;
 		}
 	} else {
 		// Do not check for the switch type ('-s')
-		if((results.fp = pcap_open_live(args[2],
-								100 /*snaplen*/,
-								1,
-								20 /*read timeout*/,
-								errbuf)
-			) == NULL) {
-			fprintf(stderr, "\nError opening source: %s\n", errbuf);
+		if (( results.fp = pcap_open_live (args[2],
+										   100 /*snaplen*/,
+										   1,
+										   20 /*read timeout*/,
+										   errbuf)
+			 ) == NULL) {
+			fprintf (stderr, "\nError opening source: %s\n", errbuf);
 			results.goodStart = false;
 			return results;
 		}
@@ -144,27 +143,26 @@ SetupResults setup(int arg_count, char* args[]){
 	return results;
 }
 
-
-int main(int argc, char *argv[]) {
+int main (int argc, char *argv[ ]) {
 	using namespace std;
-	
-	auto setupRes = setup(argc, argv);
-	
+
+	auto setupRes = setup (argc, argv);
+
 	//If the setup is bad, kill now
-	if (!setupRes.goodStart) { 
+	if (!setupRes.goodStart) {
 		return -1;
 	}
-	
+
 	/*stores the azimuth value for current block being processed*/
 	int azimuth = 0;
-	
+
 	/*Declaration and initialization of the output file that we will be writing to and the input file we will be reading settings from.*/
-	ofstream capFile("LIDAR_data.txt");
-	printf("\n\nvx %i\n\n", azimuth);
+	ofstream capFile ("LIDAR_data.txt");
+	printf ("\n\nvx %i\n\n", azimuth);
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
-	
+
 	int dataBlockStatus = 0;	//used to facilitate
 	int blockCounter = 0; //counter for number of data blocks counted in a packet
 	/*counter for the number of distance and reflectivity data points processed.*/
@@ -173,35 +171,35 @@ int main(int argc, char *argv[]) {
 	bool gpsHeader = false;
 	int gpsByte = 0;
 	int res;
-	while((res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
-		if(res == 0) //if there is a timeout, continue to the next loop
+	while (( res = pcap_next_ex (setupRes.fp, &header, &pkt_data) ) >= 0) {
+		if (res == 0) //if there is a timeout, continue to the next loop
 			continue;
 
 		//TODO: Extract to a function
-		for(int i = 1; i < (header->caplen + 1); i++) {
+		for (int i = 1; i < ( header->caplen + 1 ); i++) {
 			auto curByte = pkt_data[i - 1];	// The current byte being processed
 			auto nextByte = pkt_data[i];	//used in conjunction with curByte
 
-			switch(dataBlockStatus) {
+			switch (dataBlockStatus) {
 				case 0:	//0xFFEE has not been found, GPS sentence has not been found
-					if(curByte == 255 && nextByte == 238) {	//detects 0xFFEE
+					if (curByte == 255 && nextByte == 238) {	//detects 0xFFEE
 						dataBlockStatus = 1;
 						blockCounter++;
-					} else if(curByte == 36 && nextByte == 71) {	//detects start of GPS sentence, "$G"
+					} else if (curByte == 36 && nextByte == 71) {	//detects start of GPS sentence, "$G"
 						dataBlockStatus = 4;
 					}
 					break;
 				case 1: //0xFFEE has been found, begin reading and calculating azimuth value
-					if(!flag) {
+					if (!flag) {
 						/*the purpose of this if statement is to skip one iteration of the for loop. in the previous loop, nextByte
 						was used to identify the block flag. In the loop after, that byte became curByte and the azimuth calculation
 						begins at the byte AFTER that one. hopefully that made sense.*/
 						flag = true;
 					} else {
-						azimuth = TwoByteHexConv(curByte);
+						azimuth = TwoByteHexConv (curByte);
 
-						if(azimuth != -1) {
-							capFile << endl << "angle= " << setw(10) << azimuth << " ";
+						if (azimuth != -1) {
+							capFile << endl << "angle= " << setw (10) << azimuth << " ";
 							dataBlockStatus = 2;
 						}
 					}
@@ -212,18 +210,18 @@ int main(int argc, char *argv[]) {
 					ctr++;	//keeps track of how many bytes have been read within this switch case.
 							//3 bytes per data point * 32 data points = 96 bytes total. this will be used for the logic.
 
-					if(ctr % 3 != 0) {
+					if (ctr % 3 != 0) {
 						/*temporarily stores the distance value for the current block being processed. Each of the 32 values per block get printed immediately.*/
-						auto distance = 2 * TwoByteHexConv(curByte); //multiplied by 2 because the precision is down to 2 millimeters
-						if(distance > -1) {
-							capFile << " " << setw(10) << distance;
+						auto distance = 2 * TwoByteHexConv (curByte); //multiplied by 2 because the precision is down to 2 millimeters
+						if (distance > -1) {
+							capFile << " " << setw (10) << distance;
 						}
 						distance = -1;
 					} else {
-						capFile << " " << setw(10) << curByte; //reflectivity value
+						capFile << " " << setw (10) << curByte; //reflectivity value
 					}
 
-					if(ctr == 96) {
+					if (ctr == 96) {
 						//TODO: assure that the if statement is functionally the same as the previous switch
 						/*switch(blockCounter) {
 							case 12:
@@ -236,50 +234,48 @@ int main(int argc, char *argv[]) {
 								break;
 						}*/
 
-						
-						if(blockCounter == 12){
+						if (blockCounter == 12) {
 							dataBlockStatus = 3;
 							ctr = 0;
-						}else{
+						} else {
 							dataBlockStatus = 0;
 							ctr = 0;
 						}
-						
 					}
 					break;
 				case 3:	//all 12 blocks in this packet have been read, now process the timestamp and reset dataBlockStatus
 				{
-					auto timeStamp = FourByteHexConv(curByte);
+					auto timeStamp = FourByteHexConv (curByte);
 
-					if(timeStamp != -1) {
+					if (timeStamp != -1) {
 						capFile << endl << "time= " << timeStamp;
 						dataBlockStatus = 0;
 						blockCounter = 0;
 					}
 				}
-					break;
+				break;
 				case 4:	//Read and immediately print the GPS sentence to the output
 					int cB = curByte; //Does curbyte need to be a int?
 					cout << endl;
 
-					if(!gpsHeader) {
+					if (!gpsHeader) {
 						capFile << "GPS= $G" << flush;
 						gpsHeader = true;
 						gpsByte = 84;
-					} else if(gpsByte > 0) {
-						capFile << static_cast<char>(cB) << flush;
+					} else if (gpsByte > 0) {
+						capFile << static_cast<char>( cB ) << flush;
 						gpsByte--;
 					} else {
 						gpsHeader = false;
 						dataBlockStatus = 0;
 					}
-				
+
 					break;
 			}
 		}
 	}
 
-	capFile.close();
+	capFile.close ( );
 	return 0;
 }
 
@@ -288,7 +284,7 @@ int main(int argc, char *argv[]) {
 	Used to store hex values in the both hex conversion functions.
 	Both functions use them, but set them to 0 before returning
 */
-int hex0 = 0; 
+int hex0 = 0;
 int hex1 = 0;
 int hex2 = 0;
 int hex3 = 0;
@@ -301,26 +297,26 @@ int hex7 = 0;
 int hexMode = 0;
 #pragma endregion
 
-int TwoByteHexConv(int hexVal) {
+int TwoByteHexConv (int hexVal) {
 	int val = 0;
 
-	switch(hexMode) {
+	switch (hexMode) {
 		case 0:
 			//cout << hexVal << " : ";
-			hex1 = floor(hexVal / 16);
+			hex1 = floor (hexVal / 16);
 			//cout << hex1;
-			hex0 = hexVal - (hex1 * 16);
+			hex0 = hexVal - ( hex1 * 16 );
 			//cout << "  " << hex0 << endl;
 			hexMode++;
 			break;
 		case 1:
 			//cout << hexVal << " : ";
-			hex3 = floor(hexVal / 16);
+			hex3 = floor (hexVal / 16);
 			//cout << hex3;
-			hex2 = hexVal - (hex3 * 16);
+			hex2 = hexVal - ( hex3 * 16 );
 			//cout << "  " << hex2 << endl;
 
-			val = (hex3 * pow(16, 3)) + (hex2 * pow(16, 2)) + (hex1 * 16) + hex0;
+			val = ( hex3 * pow (16, 3) ) + ( hex2 * pow (16, 2) ) + ( hex1 * 16 ) + hex0;
 			hex0 = hex1 = hex2 = hex3 = 0;
 			hexMode = 0;
 			return val;
@@ -328,42 +324,42 @@ int TwoByteHexConv(int hexVal) {
 	return -1;
 }
 
-int FourByteHexConv(int hexVal) {
+int FourByteHexConv (int hexVal) {
 	int val = 0;
 
-	switch(hexMode) {
+	switch (hexMode) {
 		case 0:
 			//cout << "case 0; " << hexVal << endl;
-			hex1 = floor(hexVal / 16);
-			hex0 = hexVal - (hex1 * 16);
+			hex1 = floor (hexVal / 16);
+			hex0 = hexVal - ( hex1 * 16 );
 			// << "   hex1, hex0: " << hex1 << ", " << hex0 << endl;
 			hexMode++;
 			break;
 		case 1:
 			//cout << "case 1; " << hexVal << endl;
-			hex3 = floor(hexVal / 16);
-			hex2 = hexVal - (hex3 * 16);
+			hex3 = floor (hexVal / 16);
+			hex2 = hexVal - ( hex3 * 16 );
 			//cout << "   hex3, hex2: " << hex3 << ", " << hex2 << endl;
 			hexMode++;
 			break;
 		case 2:
 			//cout << "case 2; " << hexVal << endl;
-			hex5 = floor(hexVal / 16);
-			hex4 = hexVal - (hex5 * 16);
+			hex5 = floor (hexVal / 16);
+			hex4 = hexVal - ( hex5 * 16 );
 			//cout << "   hex5, hex4: " << hex5 << ", " << hex4 << endl;
 			hexMode++;
 			break;
 		case 3:
 			//cout << "case 3; " << hexVal << endl;
-			hex7 = floor(hexVal / 16);
-			hex6 = hexVal - (hex7 * 16);
+			hex7 = floor (hexVal / 16);
+			hex6 = hexVal - ( hex7 * 16 );
 			//cout << "   hex7, hex6: " << hex7 << ", " << hex6 << endl;
 			hexMode++;
 			break;
 		case 4:
 			//cout << hex7 << ", " << hex6 << ", " << hex5 << ", " << hex4 << ", " << hex3 << ", " << hex2 << ", " << hex1 << ", " << hex0 << endl;
-			val = (hex7 * pow(16, 7)) + (hex6 * pow(16, 6)) + (hex5 * pow(16, 5)) + (hex4 * pow(16, 4))
-				+ (hex3 * pow(16, 3)) + (hex2 * pow(16, 2)) + (hex1 * 16) + hex0;
+			val = ( hex7 * pow (16, 7) ) + ( hex6 * pow (16, 6) ) + ( hex5 * pow (16, 5) ) + ( hex4 * pow (16, 4) )
+				+ ( hex3 * pow (16, 3) ) + ( hex2 * pow (16, 2) ) + ( hex1 * 16 ) + hex0;
 			hex7 = hex6 = hex5 = hex4 = hex3 = hex2 = hex1 = hex0 = 0;
 			hexMode = 0;
 			return val;
