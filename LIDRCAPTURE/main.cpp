@@ -81,7 +81,8 @@ SetupResults setup(int arg_count, char* args[]){
 
 		unsigned int i = 0;
 		/* Print the list */
-		for(auto d = alldevs; d; d = d->next) {
+		auto d = alldevs;
+		for(; d; d = d->next) {
 			printf("%d. %s\n    ", ++i, d->name);
 
 			if(d->description) {
