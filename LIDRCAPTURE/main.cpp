@@ -172,7 +172,8 @@ int main(int argc, char *argv[]) {
 	bool flag = false;
 	bool gpsHeader = false;
 	int gpsByte = 0;
-	while((int res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
+	int res;
+	while((res = pcap_next_ex(setupRes.fp, &header, &pkt_data)) >= 0) {
 		if(res == 0) //if there is a timeout, continue to the next loop
 			continue;
 
@@ -247,6 +248,7 @@ int main(int argc, char *argv[]) {
 					}
 					break;
 				case 3:	//all 12 blocks in this packet have been read, now process the timestamp and reset dataBlockStatus
+				{
 					auto timeStamp = FourByteHexConv(curByte);
 
 					if(timeStamp != -1) {
@@ -254,6 +256,7 @@ int main(int argc, char *argv[]) {
 						dataBlockStatus = 0;
 						blockCounter = 0;
 					}
+				}
 					break;
 				case 4:	//Read and immediately print the GPS sentence to the output
 					int cB = curByte; //Does curbyte need to be a int?
