@@ -31,7 +31,7 @@
 *
 */
 
-#include "headers/pcap.h"
+#include <pcap/pcap.h>
 //Standard library
 #include <cstdlib>
 #include <cstdio>
@@ -113,14 +113,14 @@ SetupResults setup (int arg_count, char* args[ ]) {
 		/* Jump to the selected adapter */
 		for (d = alldevs; i < inum - 1; d = d->next, i++);
 		/* Open the device */
-		printf (d->name);
+		printf ("%s", d->name);
 		if (( results.fp = pcap_open_live (d->name,
 										   100 /*snaplen*/,
 										   1,
 										   20 /*read timeout*/,
 										   errbuf)
 			 ) == NULL) {
-			printf (errbuf);
+			printf ("%s", errbuf);
 			fprintf (stderr, "\nError opening adapter\n");
 			results.goodStart = false;
 			return results;
