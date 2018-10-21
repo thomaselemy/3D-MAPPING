@@ -60,7 +60,6 @@ struct SetupResults {
 SetupResults setup (int arg_count, char* args[ ]) {
 	SetupResults results;
 
-	pcap_if_t *alldevs;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
 	printf ("pktdump_ex: prints the packets of the network using WinPcap.\n");
@@ -70,8 +69,10 @@ SetupResults setup (int arg_count, char* args[ ]) {
 			"      pktdump_ex -s rpcap://\\Device\\NPF_{C8736017-F3C3-4373-94AC-9A34B7DAD998}\n\n");
 
 	if (arg_count < 3) {
+	
 		printf ("\nNo adapter selected: printing the device list:\n");
 		/* The user didn't provide a packet source: Retrieve the local device list */
+		pcap_if_t *alldevs;
 		if (pcap_findalldevs (&alldevs, errbuf) == -1) {
 			fprintf (stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
 			results.goodStart = false;
@@ -182,10 +183,10 @@ int main (int argc, char *argv[ ]) {
 
 			switch (dataBlockStatus) {
 				case 0:	//0xFFEE has not been found, GPS sentence has not been found
-					if (curByte == 255 && nextByte == 238) {	//detects 0xFFEE
+					if (curByte == 0xFF && nextByte == 0xEE) {	//detects 0xFFEE
 						dataBlockStatus = 1;
 						blockCounter++;
-					} else if (curByte == 36 && nextByte == 71) {	//detects start of GPS sentence, "$G"
+					} else if (curByte == '$' && nextByte == 'G') {	//detects start of GPS sentence, "$G"
 						dataBlockStatus = 4;
 					}
 					break;
@@ -222,25 +223,12 @@ int main (int argc, char *argv[ ]) {
 					}
 
 					if (ctr == 96) {
-						//TODO: assure that the if statement is functionally the same as the previous switch
-						/*switch(blockCounter) {
-							case 12:
-								dataBlockStatus = 3;
-								ctr = 0;
-								break;
-							default:
-								dataBlockStatus = 0;
-								ctr = 0;
-								break;
-						}*/
-
 						if (blockCounter == 12) {
 							dataBlockStatus = 3;
-							ctr = 0;
 						} else {
 							dataBlockStatus = 0;
-							ctr = 0;
 						}
+						ctr = 0;
 					}
 					break;
 				case 3:	//all 12 blocks in this packet have been read, now process the timestamp and reset dataBlockStatus
