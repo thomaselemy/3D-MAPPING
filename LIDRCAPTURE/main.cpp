@@ -33,23 +33,18 @@
 
 #include <pcap/pcap.h>
 //Standard library
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <fstream>
-#include <cmath> // unused?
-#include <cstring> // unused?
-#include <ctime> // unused
+#include <cstdio>	// fprintf, printf
+#include <iostream>	// cout
+#include <iomanip>	// setw
+#include <fstream>	// ofstream
+#include <cmath> 	// floor, pow
 
 //TODO: Move to a header file or (after refactoring out some other functions) move definitions
 #pragma region "FUNCTION PROTOTYPES"
 /* Takes in the 2 byte values for the azimuth or distance value and returns the calculated value as an integer*/
-int TwoByteHexConv (int);
+int TwoByteHexConv (int hexVal);
 /* Takes in the 4 byte values for the time stamp and returns the calculated value as an integer*/
-int FourByteHexConv (int);
+int FourByteHexConv (int hexVal);
 #pragma endregion
 
 struct SetupResults {
@@ -79,11 +74,12 @@ SetupResults setup (int arg_count, char* args[ ]) {
 			return results;
 		}
 
-		unsigned int i = 0;
+		//int is implyed here
+		unsigned interface_count = 0;
 		/* Print the list */
 		auto d = alldevs;
 		for (; d; d = d->next) {
-			printf ("%d. %s\n    ", ++i, d->name);
+			printf ("%d. %s\n    ", ++interface_count, d->name);
 
 			if (d->description) {
 				printf (" (%s)\n", d->description);
@@ -92,17 +88,17 @@ SetupResults setup (int arg_count, char* args[ ]) {
 			}
 		}
 
-		if (i == 0) {
+		if (interface_count == 0) {
 			fprintf (stderr, "No interfaces found! Exiting.\n");
 			results.goodStart = false;
 			return results;
 		}
 
-		unsigned int inum = 0;
-		printf ("Enter the interface number (1-%d):", i);
-		scanf ("%d", &inum);
+		unsigned interface_number = 0;
+		printf ("Enter the interface number (1-%d):", interface_count);
+		scanf ("%d", &interface_number);
 
-		if (inum < 1 || inum > i) {
+		if (interface_number < 1 || interface_number > interface_count) {
 			printf ("\nInterface number out of range.\n");
 
 			/* Free the device list */
@@ -112,7 +108,8 @@ SetupResults setup (int arg_count, char* args[ ]) {
 		}
 
 		/* Jump to the selected adapter */
-		for (d = alldevs; i < inum - 1; d = d->next, i++);
+		for (d = alldevs; interface_count < interface_number - 1; 
+			d = d->next, interface_count++);
 		/* Open the device */
 		printf ("%s", d->name);
 		if (( results.fp = pcap_open_live (d->name,
@@ -159,7 +156,8 @@ int main (int argc, char *argv[ ]) {
 
 	/*Declaration and initialization of the output file that we will be writing to and the input file we will be reading settings from.*/
 	ofstream capFile ("LIDAR_data.txt");
-	printf ("\n\nvx %i\n\n", azimuth);
+	printf ("\n\nvx %i\n\n", azimuth); // azimuth will always be 0 here. Do we need to print that?
+	//cout << endl << endl << "vx " << azimuth << endl << endl;
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
@@ -172,6 +170,16 @@ int main (int argc, char *argv[ ]) {
 	bool gpsHeader = false;
 	int gpsByte = 0;
 	int res;
+	
+	/*the following are used only inside the for loop:
+		dataBlockStatus
+		blockCounter
+		ctr
+		flag
+		gpsHeader
+		gpsByte
+	all will have to be static variables
+	*/
 	while (( res = pcap_next_ex (setupRes.fp, &header, &pkt_data) ) >= 0) {
 		if (res == 0) //if there is a timeout, continue to the next loop
 			continue;
