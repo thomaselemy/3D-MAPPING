@@ -62,13 +62,11 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 	if (arg_count < 3) {
 	
 		printf ("\nNo adapter selected: printing the device list:\n");
-		//std::cout << std::endl << "No adapter selected. Printing the device list:" << std::endl;
 		
 		//Retrieve the local device list 
 		pcap_if_t *alldevs;
 		if (pcap_findalldevs (&alldevs, errbuf) == -1) {
 			fprintf (stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
-			//std::cerr << "Error in pcap_findalldevs_ex: " << errbuf << std::endl;
 			return NULL;
 		}
 
@@ -77,20 +75,17 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 		auto d = alldevs;
 		for (; d != NULL; d = d->next) {
 			printf ("%d. %s\n    ", ++interface_count, d->name);
-			//std::cout << ++interface_count << ". " << d->name << std::endl;
+			
 			if (d->description != NULL) {
-				printf (" (%s)\n", d->description);
-				//std::cout << " (" << d->description << ")" << std::endl;
+				printf (" (%s)\n", d->description);	
 			} else {
 				printf (" (No description available)\n");
-				//std::cout << " (No description available)" << std::endl;
 			}
 		}
 
 		//Possibility of no interfaces
 		if (interface_count == 0) {
 			fprintf (stderr, "No interfaces found! Exiting.\n");
-			//std::cerr << "No interfaces found! Exiting." << std::endl;
 			return NULL;
 		}
 
@@ -98,20 +93,12 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 		unsigned interface_number = 0;
 		printf ("Enter the interface number (1-%d): ", interface_count);
 		scanf ("%d", &interface_number);
-		//std::cout << "Enter the interface number (1-"<< interface_count <<"): ";
-		//std::cin.ignore();
-		//std::cin >> interface_number;
 
 		//Sanity check the user
 		if (interface_number < 1 || interface_number > interface_count) {
 			printf ("\nInterface number out of range.\n");
-			//std::cout << std::endl << "Interface number out of range." << std::endl;
 
-			/* 
-			Procedure to leave if the user is insane:
-			1. Free the device list 
-			2. Return a "bad start" flag
-			*/
+			/* Free the device list */
 			pcap_freealldevs (alldevs);
 			return NULL;
 		}
@@ -123,7 +110,6 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 			d = d->next, interface_count++);
 		
 		printf ("%s", d->name);
-		//std::cout << d->name;
 		
 		// Open the device, which can fail
 		toRet = pcap_open_live (d->name, 100 /*snaplen*/,
@@ -132,10 +118,8 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 										   errbuf);
 			 
 		if (toRet == NULL) {
-			printf ("%s", errbuf); //std::cout << errbuf;
+			printf ("%s", errbuf);
 			fprintf (stderr, "\nError opening adapter\n"); 
-			//std::cerr << std::endl << "Error opening adapter" << std::endl;
-			//return toRet; Unneeded
 		}
 	} else {
 		//The 2-th argument is the device we want
@@ -147,7 +131,6 @@ pcap_t* setup (int arg_count, char* args[ ]) {
 		// Do not check for the switch type ('-s')
 		if (toRet == NULL) {
 			fprintf (stderr, "\nError opening source: %s\n", errbuf);
-			//return toRet; Unneeded
 		}
 	}
 
@@ -172,8 +155,6 @@ int main (int argc, char *argv[ ]) {
 
 	/*Do we have an input file we will be reading settings from?*/
 	ofstream capFile ("LIDAR_data.txt");
-	//printf ("\n\nvx %i\n\n", azimuth); // azimuth will always be 0 here. Do we need to print that?
-	cout << endl << endl << "vx " << azimuth << endl << endl;
 
 	pcap_pkthdr* header;
 	const u_char* pkt_data;
@@ -203,6 +184,7 @@ int main (int argc, char *argv[ ]) {
 		//TODO: Extract to a function
 		//caplen is an unsigned 32-bit int (u_int32)
 		//pkt_data is a pointer to const unsigned chars (const uchar*)
+		//if(res != 0){ processPackets(header -> caplen, pkt_data); }
 		for (unsigned i = 1; i < ( header->caplen + 1 ); i++) {
 			const auto curByte = pkt_data[i - 1];	// The current byte being processed
 			const auto nextByte = pkt_data[i];	//used in conjunction with curByte

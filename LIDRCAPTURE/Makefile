@@ -1,11 +1,12 @@
 debug: 
-	@g++ -c main.cpp 
+	@g++ -c -o lidar.o main_lidar.cpp 
 	
 release: debug
-	@g++ main.o -lpcap
+	@g++ lidar.o -lpcap
 	
 clean:
-	@rm main.o a.out
+	@rm *.o a.out
+	@clear
 	
 help:
 	@echo "debug: \tCompiles main.cpp to main.o (Default Command)"
