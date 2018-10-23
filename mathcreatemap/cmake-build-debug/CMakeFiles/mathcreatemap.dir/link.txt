@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/mathcreatemap.dir/main.cpp.o CMakeFiles/mathcreatemap.dir/math.cpp.o  -o mathcreatemap 
