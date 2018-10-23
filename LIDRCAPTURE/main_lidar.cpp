@@ -252,7 +252,7 @@ int main (int argc, char *argv[ ]) {
 				}
 				break;
 				case 4:	//Read and immediately print the GPS sentence to the output
-					int cB = curByte; //Does curbyte need to be a int?
+					auto cB = curByte; //Does curbyte need to be a int?
 					cout << endl;
 
 					if (!gpsHeader) {
