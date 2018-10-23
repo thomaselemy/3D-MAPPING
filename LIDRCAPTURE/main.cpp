@@ -47,14 +47,9 @@ int TwoByteHexConv (int hexVal);
 int FourByteHexConv (int hexVal);
 #pragma endregion
 
-struct SetupResults {
-	bool goodStart = true;
-	pcap_t* fp;
-};
-
-SetupResults setup (int arg_count, char* args[ ]) {
-	SetupResults results;
-
+pcap_t* setup (int arg_count, char* args[ ]) {
+	
+	pcap_t* toRet;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
 	printf ("pktdump_ex: prints the packets of the network using WinPcap.\n");
@@ -63,83 +58,104 @@ SetupResults setup (int arg_count, char* args[ ]) {
 			"      pktdump_ex -s file://c:/temp/file.acp\n"
 			"      pktdump_ex -s rpcap://\\Device\\NPF_{C8736017-F3C3-4373-94AC-9A34B7DAD998}\n\n");
 
+	//Did the user did not give the adapter (packet source) as an argument?
 	if (arg_count < 3) {
 	
 		printf ("\nNo adapter selected: printing the device list:\n");
-		/* The user didn't provide a packet source: Retrieve the local device list */
+		//std::cout << std::endl << "No adapter selected. Printing the device list:" << std::endl;
+		
+		//Retrieve the local device list 
 		pcap_if_t *alldevs;
 		if (pcap_findalldevs (&alldevs, errbuf) == -1) {
 			fprintf (stderr, "Error in pcap_findalldevs_ex: %s\n", errbuf);
-			results.goodStart = false;
-			return results;
+			//std::cerr << "Error in pcap_findalldevs_ex: " << errbuf << std::endl;
+			return NULL;
 		}
 
-		//int is implyed here
-		unsigned interface_count = 0;
-		/* Print the list */
+		// Print the list and actually count how many interfaces there are
+		unsigned interface_count = 0; //int is implyed here
 		auto d = alldevs;
-		for (; d; d = d->next) {
+		for (; d != NULL; d = d->next) {
 			printf ("%d. %s\n    ", ++interface_count, d->name);
-
-			if (d->description) {
+			//std::cout << ++interface_count << ". " << d->name << std::endl;
+			if (d->description != NULL) {
 				printf (" (%s)\n", d->description);
+				//std::cout << " (" << d->description << ")" << std::endl;
 			} else {
 				printf (" (No description available)\n");
+				//std::cout << " (No description available)" << std::endl;
 			}
 		}
 
+		//Possibility of no interfaces
 		if (interface_count == 0) {
 			fprintf (stderr, "No interfaces found! Exiting.\n");
-			results.goodStart = false;
-			return results;
+			//std::cerr << "No interfaces found! Exiting." << std::endl;
+			return NULL;
 		}
 
+		//What interface does the user want?
 		unsigned interface_number = 0;
-		printf ("Enter the interface number (1-%d):", interface_count);
+		printf ("Enter the interface number (1-%d): ", interface_count);
 		scanf ("%d", &interface_number);
+		//std::cout << "Enter the interface number (1-"<< interface_count <<"): ";
+		//std::cin.ignore();
+		//std::cin >> interface_number;
 
+		//Sanity check the user
 		if (interface_number < 1 || interface_number > interface_count) {
 			printf ("\nInterface number out of range.\n");
+			//std::cout << std::endl << "Interface number out of range." << std::endl;
 
-			/* Free the device list */
+			/* 
+			Procedure to leave if the user is insane:
+			1. Free the device list 
+			2. Return a "bad start" flag
+			*/
 			pcap_freealldevs (alldevs);
-			results.goodStart = false;
-			return results;
+			return NULL;
 		}
 
-		/* Jump to the selected adapter */
-		for (d = alldevs; interface_count < interface_number - 1; 
+		// Jump to the selected adapter, which has been checked
+		//We do not need the interface count to count the max interfaces
+		for (d = alldevs, interface_count = 0; 
+			interface_count < interface_number - 1; 
 			d = d->next, interface_count++);
-		/* Open the device */
+		
 		printf ("%s", d->name);
-		if (( results.fp = pcap_open_live (d->name,
-										   100 /*snaplen*/,
+		//std::cout << d->name;
+		
+		// Open the device, which can fail
+		toRet = pcap_open_live (d->name, 100 /*snaplen*/,
 										   1,
 										   20 /*read timeout*/,
-										   errbuf)
-			 ) == NULL) {
-			printf ("%s", errbuf);
-			fprintf (stderr, "\nError opening adapter\n");
-			results.goodStart = false;
-			return results;
+										   errbuf);
+			 
+		if (toRet == NULL) {
+			printf ("%s", errbuf); //std::cout << errbuf;
+			fprintf (stderr, "\nError opening adapter\n"); 
+			//std::cerr << std::endl << "Error opening adapter" << std::endl;
+			//return toRet; Unneeded
 		}
 	} else {
-		// Do not check for the switch type ('-s')
-		if (( results.fp = pcap_open_live (args[2],
-										   100 /*snaplen*/,
+		//The 2-th argument is the device we want
+		toRet = pcap_open_live (args[2], 100 /*snaplen*/,
 										   1,
 										   20 /*read timeout*/,
-										   errbuf)
-			 ) == NULL) {
+										   errbuf);
+										   
+		// Do not check for the switch type ('-s')
+		if (toRet == NULL) {
 			fprintf (stderr, "\nError opening source: %s\n", errbuf);
-			results.goodStart = false;
-			return results;
+			//return toRet; Unneeded
 		}
 	}
 
-	results.goodStart = true;
-	return results;
+	return toRet;
 }
+
+//What the function would look like
+void processPackets(bpf_u_int32 capped_length, const u_char* data);
 
 int main (int argc, char *argv[ ]) {
 	using namespace std;
@@ -147,22 +163,22 @@ int main (int argc, char *argv[ ]) {
 	auto setupRes = setup (argc, argv);
 
 	//If the setup is bad, kill now
-	if (!setupRes.goodStart) {
+	if (setupRes == NULL) {
 		return -1;
 	}
 
 	/*stores the azimuth value for current block being processed*/
 	int azimuth = 0;
 
-	/*Declaration and initialization of the output file that we will be writing to and the input file we will be reading settings from.*/
+	/*Do we have an input file we will be reading settings from?*/
 	ofstream capFile ("LIDAR_data.txt");
-	printf ("\n\nvx %i\n\n", azimuth); // azimuth will always be 0 here. Do we need to print that?
-	//cout << endl << endl << "vx " << azimuth << endl << endl;
+	//printf ("\n\nvx %i\n\n", azimuth); // azimuth will always be 0 here. Do we need to print that?
+	cout << endl << endl << "vx " << azimuth << endl << endl;
 
-	struct pcap_pkthdr *header;
-	const u_char *pkt_data;
+	pcap_pkthdr* header;
+	const u_char* pkt_data;
 
-	int dataBlockStatus = 0;	//used to facilitate
+	int dataBlockStatus = 0;
 	int blockCounter = 0; //counter for number of data blocks counted in a packet
 	/*counter for the number of distance and reflectivity data points processed.*/
 	int ctr = 0;
@@ -180,15 +196,18 @@ int main (int argc, char *argv[ ]) {
 		gpsByte
 	all will have to be static variables
 	*/
-	while (( res = pcap_next_ex (setupRes.fp, &header, &pkt_data) ) >= 0) {
+	while (( res = pcap_next_ex (setupRes, &header, &pkt_data) ) >= 0) {
 		if (res == 0) //if there is a timeout, continue to the next loop
 			continue;
 
 		//TODO: Extract to a function
-		for (int i = 1; i < ( header->caplen + 1 ); i++) {
-			auto curByte = pkt_data[i - 1];	// The current byte being processed
-			auto nextByte = pkt_data[i];	//used in conjunction with curByte
+		//caplen is an unsigned 32-bit int (u_int32)
+		//pkt_data is a pointer to const unsigned chars (const uchar*)
+		for (unsigned i = 1; i < ( header->caplen + 1 ); i++) {
+			const auto curByte = pkt_data[i - 1];	// The current byte being processed
+			const auto nextByte = pkt_data[i];	//used in conjunction with curByte
 
+			//TODO: Is this just a state machine?
 			switch (dataBlockStatus) {
 				case 0:	//0xFFEE has not been found, GPS sentence has not been found
 					if (curByte == 0xFF && nextByte == 0xEE) {	//detects 0xFFEE
