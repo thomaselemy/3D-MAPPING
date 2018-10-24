@@ -43,7 +43,6 @@ int main() {
     ofstream test("testData.txt");
     ofstream ptCloudOFS("trial_.txt");
     
-
     print("***Counting lines from input files and creating matrices");
 
     auto nLidarLines = LineCount(lidarIFS);	
@@ -59,15 +58,13 @@ int main() {
     lidarIFS.seekg(0);
     imuIFS.clear();
     imuIFS.seekg(0);
-
+	print("Done Counting");
+	
 #pragma region ARRAY DECLARATIONS
 
 	vector<array<double, 50>> lidarData (nLidarLines);
 	vector<array<string, 13>> lidarGPS (nGpsLines);
 	vector<array<double, 11>> imuData (nImuLines);
-
-    print("Done Counting");
-
 
     //Angles of the 16 individual lasers are provided by Velodyne documentation.
     //double laserAngle[16] = { 105, 89, 103, 93, 101, 85, 99, 83, 97, 81, 95, 79, 93, 77, 91, 75 };
@@ -99,7 +96,8 @@ int main() {
         //Seeks angle_det at the beginning of a line, stores angle value and the following distance and reflectivity points.
         //Interpolates missing angle values, as described in the VLP-16 documentation
         if (cur.substr(0, 6) == ANGLE_DET){
-            lidarData[row][col] = stod(cur.substr(6, 11)); //getting the angle value
+        	//Load the angle value
+            lidarData[row][col] = stod(cur.substr(6, 11));
 
             int cursor = 0;
             for (unsigned i = 1; i < 96; i++) {
@@ -110,28 +108,31 @@ int main() {
                 	//Go down one row for the next set of distance+reflectivity values
                     row++;
                     
-                    //Do not goto 0 b/c that is where the interpolated value will be stored	
+                    //Do not use 0 b/c that is where the interpolated result will be stored	
                     col = 1;	
 
                     //azimuth interpolation
                     //Check to avoid access violation error or index out of bound error
                     if (row >= 3){	
                     
+                    	//360 * 100
+                    	constexpr auto magicVal = 36000;
                         auto azi1 = lidarData[row - 3][0];
                         auto azi3 = lidarData[row - 1][0];
 
                         if (azi3 < azi1){
-                            azi3 += 36000;
+                            azi3 += magicVal;
                         }
 
                         auto azi2 = (azi1 + azi3) / 2;
 
-					//account for rollover. values are not to exceed 35999.
-                        if (azi2 > 35999) {
-                            azi2 -= 36000;
+						//account for rollover. values are not to exceed 35999.
+                        if (azi2 >= magicVal) {
+                            azi2 -= magicVal;
                         }
-
-                        lidarData[row - 2][0] = azi2; //assign the missing angle value with the interpolated one
+						
+						//assign the missing angle value with the interpolated one
+                        lidarData[row - 2][0] = azi2; 
                     }
                 }
 
@@ -139,7 +140,7 @@ int main() {
 				//See the lidarData Matrix Organization spreadsheet
                 if (i % 3 != 0){ 
                 	//To move through the text file value by value 
-                	//11 characters apart
+                	//11 characters apart, offset 18 to not read the first item
                     charPos = 18 + (11 * cursor);	
                     //Getting distance value
                     lidarData[row][col] = stod(cur.substr(charPos, 11)); 
@@ -158,15 +159,16 @@ int main() {
         }else if (cur.substr(0, 5) == TIME_DET){
             curTime = stod(cur.substr(5, 11));
 
-            for (int i = 23; i > -1; i--) {
+            for (int i = 23; i >= 0; i--) {
                 lidarData[(row - 24) + i][49] = curTime;
 
                 for (unsigned j = 1; j < 17; j++){
                     auto sequence_index = i;
-                    int data_pt_index = j - 1;
+                    auto data_pt_index = j - 1;
 
-                    auto exact_time = curTime + (55.296 * sequence_index) + (2.304 * data_pt_index);
-                    lidarData[(row - 24) + i][j * 3] = exact_time;
+                    lidarData[(row - 24) + i][j * 3] = curTime 
+                    						+ (55.296 * sequence_index) 
+                   							+ (2.304 * data_pt_index);
                 }
             }
         
@@ -266,8 +268,8 @@ int main() {
     print("***Start math");
 
     bool timeFlag;
-    constexpr unsigned testTime = 500;
-    constexpr double testAngle = 30;
+    constexpr auto testTime = 500;
+    constexpr auto testAngle = 30;
 				
     for (int imuRow = 0; imuRow < nImuLines; imuRow++){
         if (imuRow + 1 >= nImuLines || lRow + 1 >= nLidarLines) { print("IOOB SAVE"); break; } //prevents loop from throwing an index oob error
@@ -299,14 +301,16 @@ int main() {
             lidarTime = lidarData[lRow][lCol];	//update lidarTime
         }
 
-        while (microseconds(lidarTime) >= imuTA_msPH && microseconds(lidarTime) < imuTB_msPH){	//while the lidarTime is between the two imu ts, keep incrementing through lidarTime
+		//while the lidarTime is between the two imu ts, keep incrementing through lidarTime
+        while (microseconds(lidarTime) >= imuTA_msPH && microseconds(lidarTime) < imuTB_msPH){	
         
             timeFlag = false;
+			
+			//lidarTime is closer to imuA than imuB
+            if (abs(imuTA_msPH - microseconds(lidarTime)) <= abs(imuTB_msPH - microseconds(lidarTime))) { 
 
-            if (abs(imuTA_msPH - microseconds(lidarTime)) <= abs(imuTB_msPH - microseconds(lidarTime))) { //lidarTime is closer to imuA than imuB
-
-               	imuRowSelect = imuRow; //use imuTimeA
-
+               	imuRowSelect = imuRow; 
+				//use imuTimeA
                 if (abs(imuTA_msPH - microseconds(lidarTime)) < (microseconds(testTime))) {
                     timeFlag = true;
                 }
