@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/imucapture.dir/main.cpp.o  -o imucapture -Wl,-Bstatic -lncurses -Wl,-Bdynamic -lncurses -ldl 
