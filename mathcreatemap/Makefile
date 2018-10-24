@@ -1,8 +1,6 @@
 debug:
-	@g++ -o math_main.o main.cpp tz.h
+	@g++ -o math_main.o *.cpp tz.h georef.hpp math.hpp 2>&1 | tee error.txt
 	
-release:
-	@g++ math_main.o
-	
-clean:
-	@rm *.o 
+clean:	
+	@clear
+	@rm *.o
