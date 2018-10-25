@@ -26,7 +26,8 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
+#ifndef _DEVICE_CLASS
+#define _DEVICE_CLASS
 
 #include <xsens/xsresultvalue.h>
 #include <xsens/xsbytearray.h>
@@ -39,11 +40,10 @@
 
 class StreamInterface;
 
-class DeviceClass
-{
+class DeviceClass{
 public:
-	DeviceClass(void);
-	~DeviceClass(void);
+	DeviceClass();
+	~DeviceClass();
 
 	bool openPort(const XsPortInfo& portInfo);
 	void close();
@@ -64,3 +64,4 @@ private:
 	XsByteArray m_dataBuffer;
 };
 
+#endif

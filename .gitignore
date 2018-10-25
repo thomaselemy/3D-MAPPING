@@ -4,3 +4,7 @@
 *.out
 
 mathcreatemap/error\.txt
+
+*.gch
+
+imucapture/error\.txt
