@@ -1,5 +1,5 @@
 debug: 
-	@g++ -c -o lidar.o main_lidar.cpp 
+	@g++ -c -o lidar.o main_lidar.cpp 2>&1 | tee error.txt
 	
 release: debug
 	@g++ lidar.o -lpcap
