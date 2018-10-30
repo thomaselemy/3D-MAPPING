@@ -1,6 +1,6 @@
 debug:
-	@g++ -I./ -std=c++1z main.cpp deviceclass.h 2>&1 | tee error.txt
+	@g++ -I./ -o main_imu.o main.cpp deviceclass.h 2>&1 | tee error.txt
 	
 clean:
-	@rm *.gch error.txt
+	@rm *.gch *.o
 	@clear

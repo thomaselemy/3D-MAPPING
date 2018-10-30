@@ -54,7 +54,7 @@ int main() {
     //double laserAngle[16] = { 15, -1, 13,   3, 11,  -5, 9,  -7, 7, -9, 5,  -11, 3, -13, 1, -15 };
     //guess: the bottom array is just the top - 90
     array<double, 16> laserAngle = { 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
-    for (unsigned ctr = 0; ctr < 16; ctr++){
+    for (unsigned ctr = 0; ctr < laserAngle.size(); ctr++){
         laserAngle[ctr] = ConvertToRadians(laserAngle[ctr]);
     }
 #pragma endregion
@@ -70,7 +70,7 @@ int main() {
     int gRow = 0;		//Row value for the lidarGPS two-dimensional array.
     int charPos = 0;	//Modified throughout the program to know where to start reading data.
     int curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
-    int gpsTime = 0;	//Stores the value of the most recently encountered GPS time stamp, as identified by the VLP-16 documentation.
+    //int gpsTime = 0;	//Stores the value of the most recently encountered GPS time stamp, as identified by the VLP-16 documentation.
 #pragma endregion
 
     print("***Processing LIDAR data");
@@ -143,13 +143,16 @@ int main() {
             curTime = stod(cur.substr(5, 11));
 
             for (int i = 23; i >= 0; i--) {
-                lidarData[(row - 24) + i][49] = curTime;
+                
+                const auto rowIndex = (row - 24) + i;
+                
+                lidarData[rowIndex][49] = curTime;
 
                 for (unsigned j = 1; j < 17; j++){
                     auto sequence_index = i;
                     auto data_pt_index = j - 1;
 
-                    lidarData[(row - 24) + i][j * 3] = curTime 
+                    lidarData[rowIndex][j * 3] = curTime 
                     						+ (55.296 * sequence_index) 
                    							+ (2.304 * data_pt_index);
                 }
@@ -167,7 +170,7 @@ int main() {
                 print("GPS ERROR");
                 break;
             }
-            gpsTime = stod(cur.substr(12, 6));
+            //gpsTime = stod(cur.substr(12, 6));
 
             lidarGPS[gRow][0] = cur.substr(12, 6);	//GPS time
             lidarGPS[gRow][1] = cur.substr(19, 1);	//Validity, A or V
@@ -193,7 +196,7 @@ int main() {
 
     //reset for the next while loop that takes in the IMU data
     row = 0;
-    col = 0; //col is not used after this point
+    //col = 0; //col is not used after this point
 
     print("Processing IMU data");
 

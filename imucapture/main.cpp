@@ -36,9 +36,6 @@
 #include <xcommunication/int_xsdatapacket.h>
 #include <xcommunication/enumerateusbdevices.h>
 
-//#include <ncurses.h>
-//#include <curses.h>
-
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -51,7 +48,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
-//#include <conio.h>
 
 void changemode(int dir){
     static struct termios oldt, newt;
@@ -82,19 +78,17 @@ int kbhit (){
 
 int main(){
 	DeviceClass device;
-
 	auto start = clock();
 
 	try{
-		// Scan for connected USB devices
+		
 		std::cout << "Scanning for USB devices..." << std::endl;
 		XsPortInfoArray portInfoArray;
 		xsEnumerateUsbDevices(portInfoArray);
 		if (!portInfoArray.size()){
 			
 			using namespace std;
-			
-			cout << "No USB Motion Tracker found." << endl << endl;
+			cout << "No USB Motion Tracker found." << endl;
 			
 			#if _WIN32
 				cout << "Please enter COM port name (eg. COM1): ";
@@ -118,17 +112,14 @@ int main(){
 		}
 
 		// Use the first detected device
-		XsPortInfo mtPort = portInfoArray.at(0);
+		auto mtPort = portInfoArray.at(0);
 
-		// Open the port with the detected device
 		std::cout << "Opening port..." << std::endl;
 		if (!device.openPort(mtPort)){
 			throw std::runtime_error("Could not open port. Aborting.");
 		}
 		
-		// Put the device in configuration mode
 		std::cout << "Putting device into configuration mode..." << std::endl;
-		// Put the device into configuration mode before configuring the device
 		if (!device.gotoConfig()) {
 			throw std::runtime_error("Could not put device into configuration mode. Aborting.");
 		}
@@ -146,7 +137,6 @@ int main(){
 		<< ", baudrate: " << mtPort.baudrate() << std::endl;
 
 		try	{
-			// Print information about detected MTi / MTx / MTmk4 device
 			std::cout << "Device: " << device.getProductCode().toStdString() 
 			<< " opened." << std::endl;
 
@@ -192,8 +182,6 @@ int main(){
 			std::cout << std::endl << "Main loop (press any key to quit)" << std::endl;
 			std::cout << std::string(79, '-') << std::endl;
 
-			bool file_bool = false;
-
 			XsByteArray data;
 			XsMessageArray msgs;
 
@@ -203,20 +191,20 @@ int main(){
 
 				device.readDataToBuffer(data);
 				device.processBufferedData(data, msgs);
-				for (auto it = msgs.begin(); it != msgs.end(); ++it){
+				for (auto msg : msgs){
 					// Retrieve a packet
 					XsDataPacket packet;
-					auto msgID = it->getMessageId();
+					auto msgID = msg.getMessageId();
 					if (msgID == XMID_MtData) {
 						LegacyDataPacket lpacket(1, false);
-						lpacket.setMessage(*it);
+						lpacket.setMessage(msg);
 						lpacket.setXbusSystem(false);
 						lpacket.setDeviceId(mtPort.deviceId(), 0);
 						lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion, 0);
 						XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
 					
 					}else if (msgID == XMID_MtData2) {
-						packet.setMessage(*it);
+						packet.setMessage(msg);
 						packet.setDeviceId(mtPort.deviceId());
 					}
 
