@@ -7,13 +7,13 @@
 #include <array>
 #include <string>
 
-int LineCount(std::ifstream& file){
-    int dot_count = 1, n = 0;
+auto LineCount(std::ifstream& file){
     
-    std::string s;
+    using namespace std;
+    unsigned n = 0;
+    string s;
     while (getline(file, s)){ n++; }
-
-    std::cout << "Lines counted: " << n << std::endl;
+    cout << "Lines counted: " << n << endl;
 
     return n;
 }
@@ -82,7 +82,7 @@ int main() {
         	//Load the angle value
             lidarData[row][col] = stod(cur.substr(6, 11));
 
-            int cursor = 0;
+            unsigned cursor = 0;
             for (unsigned i = 1; i < 96; i++) {
                 col++;
 				
@@ -149,6 +149,7 @@ int main() {
                 lidarData[rowIndex][49] = curTime;
 
                 for (unsigned j = 1; j < 17; j++){
+					//Should these variables be moved to their only usage
                     auto sequence_index = i;
                     auto data_pt_index = j - 1;
 
@@ -166,7 +167,7 @@ int main() {
             //Avoid an exception when the lidar capture code has a typo in the GPS line
             if (cur.substr(0, 8) != "GPS= $GP"){
             
-                //TODO: have this continue to gather the GPS data after the system typo
+                //TODO: Have this continue to gather the GPS data after the system typo
                 print("GPS ERROR");
                 break;
             }

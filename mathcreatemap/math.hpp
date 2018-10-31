@@ -5,11 +5,11 @@
 
 constexpr auto PI = 3.141592653589793238463;
 
-constexpr inline double ConvertToRadians(const double angle){
+constexpr inline auto ConvertToRadians(const double angle){
     return (angle * PI) / 180;
 }
 
-constexpr inline double ConvertToDegrees(const double angle){
+constexpr inline auto ConvertToDegrees(const double angle){
     return (angle / PI) * 180;
 }
 
