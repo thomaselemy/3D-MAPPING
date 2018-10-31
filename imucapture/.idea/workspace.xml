@@ -11,82 +11,251 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40b4a015-197b-4c08-b59c-f2140814b3ec" name="Default" comment="" />
+    <list default="true" id="40b4a015-197b-4c08-b59c-f2140814b3ec" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.10.3/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/count.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/feature_tests.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/feature_tests.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/CXX.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/DependInfo.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/cmake_clean.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/cmake_clean.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/flags.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/flags.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/link.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/imucapture.dir/progress.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/imucapture.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/imucapture.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deviceclass.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/enumerateusbdevices.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/int_xsdatapacket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/iointerface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/iointerfacefile.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/iprotocolhandler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/legacydatapacket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/messagelocation.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/mtwsdidata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/packetfixeddata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/packetstamper.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/protocolhandler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/rx_tx_log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/serialinterface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/streaminterface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/synclinegmt.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/synclinemk4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/usbinterface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/xcommunicationconfig.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/xslibusb.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/xsudev.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xcommunication/xswinusb.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/pstdint.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsanalogindata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsatomicint.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsbaud.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsbaudcode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsbaudrate.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsbusid.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsbytearray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xscalibrateddata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xscontrolline.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xscopy.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdataformat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdataidentifier.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdataidentifiervalue.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdatapacket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdebugcounters.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdeviceid.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdeviceidarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdeviceidlist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsdid.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xseuler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsexception.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsfile.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsfilepos.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsgpspvtdata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsinforequest.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsint64array.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsintarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsintlist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xslibraryloader.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmalloc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmath.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmatrix.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmatrix3x3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmessage.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmessagearray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmessagelist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsmutex.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsoutputconfiguration.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsoutputconfigurationarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsoutputconfigurationlist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsoutputmode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsoutputsettings.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsplatform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsportinfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsportinfoarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsportinfolist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xspressure.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsquaternion.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrange.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgnsspvtdata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgnsssatinfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgpsdop.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgpssol.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgpssvinfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrawgpstimeutc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsresultvalue.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsrssi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsscrdata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssdidata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssimpleversion.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssnapshot.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssocket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsstring.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsstringarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsstringstreaming.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncfunction.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncline.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncpolarity.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncrole.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncsetting.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncsettingarray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xssyncsettinglist.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsthread.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstime.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstimestamp.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstriggerindicationdata.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstypedefs.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstypesconfig.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xstypesdynlib.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsushortvector.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsutctime.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsvector.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsvector3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsversion.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xsens/xsxbusmessageid.h" beforeDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FUSProjectUsageTrigger">
+    <session id="-1670345944">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.10" value="1" />
+          <entry key="project.open.time.11" value="2" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.opened" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="c" value="3" />
+          <entry key="h" value="6" />
+          <entry key="txt" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CMakeLists.txt" value="1" />
+          <entry key="ObjectiveC" value="9" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="c" value="26" />
+          <entry key="h" value="1" />
+          <entry key="txt" value="1009" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="CMakeLists.txt" value="1009" />
+          <entry key="ObjectiveC" value="27" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+            <state relative-caret-position="225">
+              <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/main.cpp">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/xsens/xsthread.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-168">
-              <caret line="123" column="29" selection-start-line="123" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
-              <folding>
-                <element signature="e#1560#1594#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1245">
+              <caret line="90" column="74" selection-start-line="90" selection-start-column="74" selection-end-line="90" selection-end-column="74" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="xsstring.h" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/xsens/xsstring.h">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/xstypes/xsthread.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3420">
-              <caret line="228" selection-start-line="228" selection-end-line="228" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ncurses.h" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/ncurses.h">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="deviceclass.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deviceclass.h">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="legacydatapacket.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="31" selection-start-line="31" selection-end-line="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="xsportinfoarray.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" selection-start-line="17" selection-end-line="17" />
+            <state relative-caret-position="135">
+              <caret line="15" column="19" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>ncurses</find>
+      <find>xsdeviceid.h</find>
+      <find>isMtM</find>
+      <find>XsDeviceId_isMtMk5</find>
+      <find>XS_DID_TYPEL_M</find>
+      <find>multi</find>
+      <find>dlopen</find>
+      <find>pthread_create</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/src/xstypes/xsdeviceid.c" />
+        <option value="$PROJECT_DIR$/include/xsens/xsdid.h" />
+        <option value="$PROJECT_DIR$/src/xstypes/xsthread.c" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
       </list>
     </option>
@@ -97,20 +266,21 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="NodePackageJsonFileManager">
-    <packageJsonPaths />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="77" />
     <option name="y" value="47" />
     <option name="width" value="1279" />
     <option name="height" value="701" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -120,30 +290,35 @@
             </path>
             <path>
               <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
+              <item name="imucapture" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
+              <item name="imucapture" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
+              <item name="imucapture" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="xstypes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="imucapture" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -163,8 +338,16 @@
     </option>
   </component>
   <component name="RunManager" selected="Application.imucapture">
-    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="imucapture" RUN_TARGET_NAME="imucapture" EXPLICIT_BUILD_TARGET_NAME="all" />
-    <configuration name="imucapture" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="imucapture" TARGET_NAME="imucapture" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="imucapture" RUN_TARGET_NAME="imucapture" />
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="imucapture" RUN_TARGET_NAME="imucapture" EXPLICIT_BUILD_TARGET_NAME="all">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="imucapture" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="imucapture" TARGET_NAME="imucapture" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="imucapture" RUN_TARGET_NAME="imucapture">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.Build All" />
       <item itemvalue="Application.imucapture" />
@@ -184,34 +367,40 @@
       <workItem from="1531411973437" duration="614000" />
       <workItem from="1531434859548" duration="68000" />
       <workItem from="1540342704671" duration="1295000" />
+      <workItem from="1540494833227" duration="139000" />
+      <workItem from="1540495083179" duration="5410000" />
+      <workItem from="1540503110369" duration="10000" />
+      <workItem from="1540984052698" duration="2980000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8031000" />
+    <option name="totallyTimeSpent" value="16570000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1299" height="743" extended-state="6" />
+    <frame x="0" y="29" width="1366" height="739" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24942264" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" visible="true" weight="0.0" />
-      <window_info anchor="bottom" id="CMake" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26435044" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32847896" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="CMake" order="7" weight="0.32686085" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="10" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.4644013" />
+      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,180 +410,89 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/xsens/xsstring.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3420">
-          <caret line="228" selection-start-line="228" selection-end-line="228" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/ncurses.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deviceclass.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1845">
-          <caret line="123" column="29" selection-start-line="123" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
-          <folding>
-            <element signature="e#1560#1594#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/xsens/xsstring.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3420">
-          <caret line="228" selection-start-line="228" selection-end-line="228" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/ncurses.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deviceclass.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1845">
-          <caret line="123" column="29" selection-start-line="123" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
-          <folding>
-            <element signature="e#1560#1594#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="8" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1845">
-          <caret line="123" column="29" lean-forward="true" selection-start-line="123" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
-          <folding>
-            <element signature="e#1560#1594#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/xsens/xsstring.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3420">
-          <caret line="228" selection-start-line="228" selection-end-line="228" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/ncurses.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deviceclass.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/xsens/xsportinfoarray.h" />
     <entry file="file://$PROJECT_DIR$/xsportinfoarray.h" />
-    <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h">
+    <entry file="file://$PROJECT_DIR$/xcommunication/legacydatapacket.h" />
+    <entry file="file://$PROJECT_DIR$/deviceclass.h" />
+    <entry file="file:///usr/include/xsens/xsstring.h" />
+    <entry file="file://$PROJECT_DIR$/main.cpp" />
+    <entry file="file:///usr/include/ncurses.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        <state relative-caret-position="-1260" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/xsens/xsdeviceid.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="707">
+          <caret line="60" column="39" selection-start-line="60" selection-start-column="39" selection-end-line="60" selection-end-column="39" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deviceclass.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file:///usr/include/ncurses.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file:///usr/include/xsens/xsstring.h">
+    <entry file="file://$PROJECT_DIR$/include/xsens/xsdid.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3420">
-          <caret line="228" selection-start-line="228" selection-end-line="228" />
+        <state relative-caret-position="127">
+          <caret line="57" column="50" selection-start-line="57" selection-start-column="50" selection-end-line="57" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/xstypes/xsdeviceid.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="325" column="55" selection-start-line="325" selection-start-column="39" selection-end-line="325" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/xstypes/xslibraryloader.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-112">
+          <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
+          <folding>
+            <element signature="e#1117#1145#0" expanded="true" />
+            <element signature="e#1228#1248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/xsens/xsstring.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+          <folding>
+            <element signature="e#1156#1182#0" expanded="true" />
+            <element signature="e#3476#15063#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/xsens/xslibraryloader.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#1170#1196#0" expanded="true" />
+            <element signature="e#1264#1276#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/xstypes/xsthread.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="15" column="19" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/xsens/xsthread.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1245">
+          <caret line="90" column="74" selection-start-line="90" selection-start-column="74" selection-end-line="90" selection-end-column="74" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-168">
-          <caret line="123" column="29" selection-start-line="123" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
-          <folding>
-            <element signature="e#1560#1594#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="225">
+          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
         </state>
       </provider>
     </entry>
