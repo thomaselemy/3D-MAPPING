@@ -24,7 +24,7 @@ find_library(TINFO
         NAMES libtinfo.so.5
         /usr/lib/)
 
-add_executable(imucapture
+set(xcommunication_HEADERS
         include/xcommunication/enumerateusbdevices.h
         include/xcommunication/int_xsdatapacket.h
         include/xcommunication/iointerface.h
@@ -45,7 +45,9 @@ add_executable(imucapture
         include/xcommunication/xcommunicationconfig.h
         include/xcommunication/xslibusb.h
         include/xcommunication/xsudev.h
-        include/xcommunication/xswinusb.h
+        include/xcommunication/xswinusb.h)
+
+set(xsens_HEADERS
         include/xsens/pstdint.h
         include/xsens/xsanalogindata.h
         include/xsens/xsarray.h
@@ -132,8 +134,9 @@ add_executable(imucapture
         include/xsens/xsvector.h
         include/xsens/xsvector3.h
         include/xsens/xsversion.h
-        include/xsens/xsxbusmessageid.h
-        include/deviceclass.h
+        include/xsens/xsxbusmessageid.h)
+
+set(xcommunication_SOURCES
         src/xcommunication/enumerateusbdevices.cpp
         src/xcommunication/int_xsdatapacket.cpp
         src/xcommunication/iointerface.cpp
@@ -149,7 +152,9 @@ add_executable(imucapture
         src/xcommunication/usbinterface.cpp
         src/xcommunication/xslibusb.cpp
         src/xcommunication/xsudev.cpp
-        src/xcommunication/xswinusb.cpp
+        src/xcommunication/xswinusb.cpp)
+
+set(xstypes_SOURCES
         src/xstypes/datapacket_p.cpp
         src/xstypes/datapacket_p.h
         src/xstypes/resource.h
@@ -197,7 +202,14 @@ add_executable(imucapture
         src/xstypes/xsutctime.c
         src/xstypes/xsvector.c
         src/xstypes/xsvector3.c
-        src/xstypes/xsversion.c
+        src/xstypes/xsversion.c)
+
+add_executable(imucapture
+        ${xcommunication_HEADERS}
+        ${xcommunication_SOURCES}
+        ${xsens_HEADERS}
+        ${xstypes_SOURCES}
+        include/deviceclass.h
         src/deviceclass.cpp
         src/main.cpp)
 
