@@ -18,13 +18,54 @@ auto LineCount(std::ifstream& file){
     return n;
 }
 
+auto loadIMUData(const std::string& file_name){
+
+	using namespace std;
+	
+	ifstream imuIFS(file_name);
+
+	vector<array<double, 11>> imuData(LineCount(imuIFS));
+	
+	if(!imuIFS){ 
+		cerr << "Could not open file " << file_name << endl;
+		return imuData; 
+	}
+	
+	imuIFS.clear();
+    imuIFS.seekg(0);
+	
+	string cur;
+	unsigned row = 0;
+	while (getline(imuIFS, cur)){
+    
+        imuData[row][0] = stod(cur.substr(0, 15));	//latitude
+        imuData[row][1] = stod(cur.substr(16, 15));	//longitude
+        imuData[row][2] = stod(cur.substr(31, 15));	//altitude
+        imuData[row][3] = stod(cur.substr(46, 15)); //w
+        imuData[row][4] = stod(cur.substr(61, 15)); //x
+        imuData[row][5] = stod(cur.substr(76, 15)); //y
+        imuData[row][6] = stod(cur.substr(91, 15)); //z
+        imuData[row][7] = stod(cur.substr(106, 15)); //roll
+        imuData[row][8] = stod(cur.substr(121, 15)); //pitch
+        imuData[row][9] = stod(cur.substr(136, 15)); //yaw
+        imuData[row][10] = stod(cur.substr(151, 21)); //time stamp
+
+        row++;
+    }
+    
+    imuIFS.close();
+    
+    return imuData;
+}
+
+
 int main() {
 
 	using namespace std;
 
     //opens the files to read/write
     ifstream lidarIFS("lidarData.txt");
-    ifstream imuIFS("IMU.txt");
+    //ifstream imuIFS("IMU.txt");
     
     print("***Counting lines from input files and creating matrices");
 
@@ -34,20 +75,19 @@ int main() {
     nLidarLines = (nLidarLines - (nLidarLines / 13)) * 2;
     
     auto nGpsLines = (nLidarLines - (12 * (nLidarLines / 13)));
-    auto nImuLines = LineCount(imuIFS);
+   // auto nImuLines = LineCount(imuIFS);
 
     //Resets the the file stream pointer to the beginning of the file
     lidarIFS.clear();
     lidarIFS.seekg(0);
-    imuIFS.clear();
-    imuIFS.seekg(0);
+    
 	print("Done Counting");
 	
 #pragma region ARRAY DECLARATIONS
 
 	vector<array<double, 50>> lidarData (nLidarLines);
 	vector<array<string, 13>> lidarGPS (nGpsLines);
-	vector<array<double, 11>> imuData (nImuLines);
+	//vector<array<double, 11>> imuData (nImuLines);
 
     //Angles of the 16 individual lasers are provided by Velodyne documentation.
     //double laserAngle[16] = { 105, 89, 103, 93, 101, 85, 99, 83, 97, 81, 95, 79, 93, 77, 91, 75 };
@@ -150,12 +190,12 @@ int main() {
 
                 for (unsigned j = 1; j < 17; j++){
 					//Should these variables be moved to their only usage
-                    auto sequence_index = i;
-                    auto data_pt_index = j - 1;
+                    //auto sequence_index = i;
+                    //auto data_pt_index = j - 1;
 
                     lidarData[rowIndex][j * 3] = curTime 
-                    						+ (55.296 * sequence_index) 
-                   							+ (2.304 * data_pt_index);
+                    						+ (55.296 * i) 
+                   							+ (2.304 * (j - 1));
                 }
             }
         
@@ -196,27 +236,12 @@ int main() {
     print("DONE");
 
     //reset for the next while loop that takes in the IMU data
-    row = 0;
+    //row = 0;
     //col = 0; //col is not used after this point
 
     print("Processing IMU data");
 
-    while (getline(imuIFS, cur)){
-    
-        imuData[row][0] = stod(cur.substr(0, 15));	//latitude
-        imuData[row][1] = stod(cur.substr(16, 15));	//longitude
-        imuData[row][2] = stod(cur.substr(31, 15));	//altitude
-        imuData[row][3] = stod(cur.substr(46, 15)); //w
-        imuData[row][4] = stod(cur.substr(61, 15)); //x
-        imuData[row][5] = stod(cur.substr(76, 15)); //y
-        imuData[row][6] = stod(cur.substr(91, 15)); //z
-        imuData[row][7] = stod(cur.substr(106, 15)); //roll
-        imuData[row][8] = stod(cur.substr(121, 15)); //pitch
-        imuData[row][9] = stod(cur.substr(136, 15)); //yaw
-        imuData[row][10] = stod(cur.substr(151, 21)); //time stamp
-
-        row++;
-    }
+    auto imuData = loadIMUData("IMU.txt");
 
     print("DONE");
 
