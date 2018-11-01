@@ -48,6 +48,7 @@
 #include <curses.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -92,8 +93,6 @@ int kbhit (void)
 }
 
 
-
-
 int main(int argc, char* argv[])
 {
 	DeviceClass device;
@@ -101,255 +100,206 @@ int main(int argc, char* argv[])
 	clock_t start;
 	start = clock();
 
-	try
+	// Scan for connected USB devices
+	std::cout << "Scanning for USB devices..." << std::endl;
+	XsPortInfoArray portInfoArray;
+	xsEnumerateUsbDevices(portInfoArray);
+	if (!portInfoArray.size()) // Can't find device
 	{
-		// Scan for connected USB devices
-		std::cout << "Scanning for USB devices..." << std::endl;
-		XsPortInfoArray portInfoArray;
-		xsEnumerateUsbDevices(portInfoArray);
-		if (!portInfoArray.size())
-		{
-			std::string portName;
-			int baudRate;
-#ifdef WIN32
-			std::cout << "No USB Motion Tracker found." << std::endl << std::endl << "Please enter COM port name (eg. COM1): " <<
-#else
-			std::cout << "No USB Motion Tracker found." << std::endl << std::endl << "Please enter COM port name (eg. /dev/ttyUSB0): " <<
-#endif
-				std::endl;
-			std::cin >> portName;
-			std::cout << "Please enter baud rate (eg. 115200): ";
-			std::cin >> baudRate;
+		std::string portName;
+		int baudRate;
+		std::cout << "No USB Motion Tracker found." << std::endl <<
+			std::endl << "Please enter COM port name (eg. /dev/ttyUSB0): " <<
+			std::endl;
+		std::cin >> portName;
+		std::cout << "Please enter baud rate (eg. 115200): ";
+		std::cin >> baudRate;
 
-			XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
-			portInfoArray.push_back(portInfo);
-		}
+		XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
+		portInfoArray.push_back(portInfo);
+	}
 
-		// Use the first detected device
-		XsPortInfo mtPort = portInfoArray.at(0);
+	// Use the first detected device
+	XsPortInfo mtPort = portInfoArray.at(0);
 
-		// Open the port with the detected device
+	// Device initialization
+	try {
 		std::cout << "Opening port..." << std::endl;
 		if (!device.openPort(mtPort))
 			throw std::runtime_error("Could not open port. Aborting.");
 
-		// Put the device in configuration mode
 		std::cout << "Putting device into configuration mode..." << std::endl;
-		if (!device.gotoConfig()) // Put the device into configuration mode before configuring the device
-		{
+		if (!device.gotoConfig())
 			throw std::runtime_error("Could not put device into configuration mode. Aborting.");
-		}
 
 		// Request the device Id to check the device type
 		mtPort.setDeviceId(device.getDeviceId());
 
 		// Check if we have an MTi / MTx / MTmk4 device
-		if (!mtPort.deviceId().isMt9c() && !mtPort.deviceId().isLegacyMtig() && !mtPort.deviceId().isMtMk4() && !mtPort.deviceId().isFmt_X000())
+		if (!mtPort.deviceId().isMt9c() &&
+			!mtPort.deviceId().isLegacyMtig() &&
+			!mtPort.deviceId().isMtMk4() &&
+			!mtPort.deviceId().isFmt_X000())
 		{
 			throw std::runtime_error("No MTi / MTx / MTmk4 device found. Aborting.");
 		}
-		std::cout << "Found a device with id: " << mtPort.deviceId().toString().toStdString() << " @ port: " << mtPort.portName().toStdString() << ", baudrate: " << mtPort.baudrate() << std::endl;
 
-		try
+		std::cout << "Found a device with id: " << mtPort.deviceId().toString().toStdString() <<
+					 " @ port: "	 << mtPort.portName().toStdString() <<
+					 ", baudrate: "  << mtPort.baudrate() << std::endl;
+
+		// Print information about detected MTi / MTx / MTmk4 device
+		std::cout << "Device: " << device.getProductCode().toStdString() <<
+					 " opened." << std::endl;
+
+		// Configure the device. Note the differences between MTix and MTmk4
+		std::cout << "Configuring the device..." << std::endl;
+		if (mtPort.deviceId().isMt9c() || mtPort.deviceId().isLegacyMtig())
 		{
-			// Print information about detected MTi / MTx / MTmk4 device
-			std::cout << "Device: " << device.getProductCode().toStdString() << " opened." << std::endl;
+			XsOutputMode outputMode = XOM_Orientation; // output orientation data
+			XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
 
-			// Configure the device. Note the differences between MTix and MTmk4
-			std::cout << "Configuring the device..." << std::endl;
-			if (mtPort.deviceId().isMt9c() || mtPort.deviceId().isLegacyMtig())
-			{
-				XsOutputMode outputMode = XOM_Orientation; // output orientation data
-				XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
-
-				// set the device configuration
-				if (!device.setDeviceMode(outputMode, outputSettings))
-				{
-					throw std::runtime_error("Could not configure MT device. Aborting.");
-				}
-			}
-			else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
-			{
-				XsOutputConfiguration quat(XDI_Quaternion, 100);
-				XsOutputConfigurationArray configArray;
-				configArray.push_back(XsOutputConfiguration(XDI_LatLon | XDI_SubFormatDouble, 100));
-				configArray.push_back(XsOutputConfiguration(XDI_AltitudeEllipsoid, 100));
-				configArray.push_back(XsOutputConfiguration(XDI_Quaternion | XDI_CoordSysNed, 100));
-				configArray.push_back(XsOutputConfiguration(XDI_VelocityXYZ | XDI_CoordSysNed, 100));
-				//configArray.push_back(XsOutputConfiguration(XDI_PositionEcef | XDI_CoordSysNed, 100));
-
-				configArray.push_back(quat);
-
-				if (!device.setOutputConfiguration(configArray))
-				{
-
-					throw std::runtime_error("Could not configure MTmk4 device. Aborting.");
-				}
-			}
-			else
-			{
-				throw std::runtime_error("Unknown device while configuring. Aborting.");
-			}
-
-			// Put the device in measurement mode
-			std::cout << "Putting device into measurement mode..." << std::endl;
-			if (!device.gotoMeasurement())
-			{
-				throw std::runtime_error("Could not put device into measurement mode. Aborting.");
-			}
-
-			std::cout << "\nMain loop (press any key to quit)" << std::endl;
-			std::cout << std::string(79, '-') << std::endl;
-
-			bool file_bool = false;
-
-			XsByteArray data;
-			XsMessageArray msgs;
-
-			while (!kbhit())
-			{
-				double duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-
-				device.readDataToBuffer(data);
-				device.processBufferedData(data, msgs);
-				for (XsMessageArray::iterator it = msgs.begin(); it != msgs.end(); ++it)
-				{
-					// Retrieve a packet
-					XsDataPacket packet;
-					if ((*it).getMessageId() == XMID_MtData) {
-						LegacyDataPacket lpacket(1, false);
-						lpacket.setMessage((*it));
-						lpacket.setXbusSystem(false);
-						lpacket.setDeviceId(mtPort.deviceId(), 0);
-						lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion, 0);	//lint !e534
-						XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
-					}
-					else if ((*it).getMessageId() == XMID_MtData2) {
-						packet.setMessage((*it));
-						packet.setDeviceId(mtPort.deviceId());
-					}
-
-					//XsVector position = packet.positionLLA();
-					//std::cout << "\r"
-					//	<< "Lat:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[0]
-					//	<< ",Lon:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[1]
-					//	<< ",Alt:" << std::setw(5) << std::fixed << std::setprecision(3) << position[2]
-					//	;
-					//XsVector3 velocity = packet.velocity();
-					//std::cout << "VelN:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[0]
-					//	<< ",VelE:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[1]
-					//	<< ",VelD:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[2]
-					//	;
-
-					//// Get the quaternion data
-					//XsQuaternion quaternion = packet.orientationQuaternion();
-					//std::cout << "\r"
-					//	<< "W:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.w()
-					//	<< ",X:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.x()
-					//	<< ",Y:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.y()
-					//	<< ",Z:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.z()
-					//	;
-
-					//// Convert packet to euler
-					//XsEuler euler = packet.orientationEuler();
-					//std::cout << ",Roll:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.roll()
-					//	<< ",Pitch:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.pitch()
-					//	<< ",Yaw:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.yaw()
-					//	;
-
-					//// Get the Timestamp
-					//std::cout << ",msTime:" << std::setw(12) << std::fixed << std::setprecision(2) << XsTime_timeStampNow(0);
-
-
-
-					// fstreaming to a text file
-					{
-						std::ofstream textfileoutput;
-						textfileoutput.open("IMU.txt", std::ofstream::out | std::ofstream::app);
-						// Titles (first line)
-						//textfileoutput << "w,x,y,z,Roll,Pitch,Yaw,Time" << std::endl;
-
-						// Titles (second line)
-						//textfileoutput << "Lat,Lon,Alt,Vel_N,Vel_E,Vel_D,w,x,y,z,Roll,Pitch,Yaw,Time" << std::endl;
-
-						// lat/lon/alt
-						XsVector position = packet.positionLLA();
-						textfileoutput << std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[0]
-							<< std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[1]
-							<< std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[2]
-							;
-
-						// Get the quaternion data
-						XsQuaternion quaternion = packet.orientationQuaternion();
-						textfileoutput << "\r"
-							<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.w()
-							<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.x()
-							<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.y()
-							<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.z()
-							;
-
-						// Convert packet to euler
-						XsEuler euler = packet.orientationEuler();
-						textfileoutput << "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.roll()
-							<< "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.pitch()
-							<< "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.yaw()
-							;
-
-						// Get the Timestamp
-						textfileoutput << " " << std::setw(20) << std::fixed << std::showpoint << std::right << XsTime_timeStampNow(0) << "\n"
-							;
-
-
-						//velocity
-						//XsVector3 velocity = packet.velocity();
-						//textfileoutput << std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[0]
-						//	<< std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[1]
-						//	<< std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[2]
-						//	;
-
-
-						textfileoutput.close();
-
-					}
-
-							;
-
-
-					std::cout << std::flush;
-				}
-				msgs.clear();
-				XsTime::msleep(0);
-			}
-			getch();
-			std::cout << "\n" << std::string(79, '-') << "\n";
-			std::cout << std::endl;
+			// set the device configuration
+			if (!device.setDeviceMode(outputMode, outputSettings))
+				throw std::runtime_error("Could not configure MT device. Aborting.");
+				
 		}
-		catch (std::runtime_error const & error)
+		else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
 		{
-			std::cout << error.what() << std::endl;
+			XsOutputConfiguration quat(XDI_Quaternion, 100);
+			XsOutputConfigurationArray configArray;
+			configArray.push_back(XsOutputConfiguration(XDI_LatLon | XDI_SubFormatDouble, 100));
+			configArray.push_back(XsOutputConfiguration(XDI_AltitudeEllipsoid, 100));
+			configArray.push_back(XsOutputConfiguration(XDI_Quaternion | XDI_CoordSysNed, 100));
+			configArray.push_back(XsOutputConfiguration(XDI_VelocityXYZ | XDI_CoordSysNed, 100));
+			//configArray.push_back(XsOutputConfiguration(XDI_PositionEcef | XDI_CoordSysNed, 100));
+
+			configArray.push_back(quat);
+
+			if (!device.setOutputConfiguration(configArray))
+				throw std::runtime_error("Could not configure MTmk4 device. Aborting.");
 		}
-		catch (...)
+		else
 		{
-			std::cout << "An unknown fatal error has occured. Aborting." << std::endl;
+			throw std::runtime_error("Unknown device while configuring. Aborting.");
 		}
 
+		// Put the device in measurement mode
+		std::cout << "Putting device into measurement mode..." << std::endl;
+		if (!device.gotoMeasurement())
+			throw std::runtime_error("Could not put device into measurement mode. Aborting.");
 
-		// Close port
-		std::cout << "Closing port..." << std::endl;
-		device.close();
 	}
 	catch (std::runtime_error const & error)
 	{
 		std::cout << error.what() << std::endl;
+		exit(EXIT_FAILURE);
 	}
 	catch (...)
 	{
 		std::cout << "An unknown fatal error has occured. Aborting." << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
-	std::cout << "Successful exit." << std::endl;
+	std::cout << "\nMain loop (press any key to quit)" << std::endl;
+	std::cout << std::string(79, '-') << std::endl;
 
-	std::cout << "Press [ENTER] to continue." << std::endl; std::cin.get();
+	bool file_bool = false;
+
+	XsByteArray data;
+	XsMessageArray msgs;
+
+	// Main loop
+	while (!kbhit())
+	{
+		double duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+
+		device.readDataToBuffer(data);
+		device.processBufferedData(data, msgs);
+		for (XsMessageArray::iterator it = msgs.begin(); it != msgs.end(); ++it)
+		{
+			// Retrieve a packet
+			XsDataPacket packet;
+			if ((*it).getMessageId() == XMID_MtData) {
+				LegacyDataPacket lpacket(1, false);
+				lpacket.setMessage((*it));
+				lpacket.setXbusSystem(false);
+				lpacket.setDeviceId(mtPort.deviceId(), 0);
+				lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion, 0);	//lint !e534
+				XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
+			}
+			else if ((*it).getMessageId() == XMID_MtData2) {
+				packet.setMessage((*it));
+				packet.setDeviceId(mtPort.deviceId());
+			}
+
+			// fstreaming to a text file
+			{
+				std::ofstream textfileoutput;
+				textfileoutput.open("IMU.txt", std::ofstream::out | std::ofstream::app);
+				// Titles (first line)
+				//textfileoutput << "w,x,y,z,Roll,Pitch,Yaw,Time" << std::endl;
+
+				// Titles (second line)
+				//textfileoutput << "Lat,Lon,Alt,Vel_N,Vel_E,Vel_D,w,x,y,z,Roll,Pitch,Yaw,Time" << std::endl;
+
+				// lat/lon/alt
+				XsVector position = packet.positionLLA();
+				textfileoutput << std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[0]
+					<< std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[1]
+					<< std::setw(15) << std::fixed << std::setprecision(6) << std::showpoint << std::right << position[2]
+					;
+
+				// Get the quaternion data
+				XsQuaternion quaternion = packet.orientationQuaternion();
+				textfileoutput << "\r"
+					<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.w()
+					<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.x()
+					<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.y()
+					<< "" << std::setw(15) << std::right << std::setprecision(5) << std::showpoint << quaternion.z()
+					;
+
+				// Convert packet to euler
+				XsEuler euler = packet.orientationEuler();
+				textfileoutput << "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.roll()
+					<< "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.pitch()
+					<< "" << std::setw(15) << std::fixed << std::showpoint << std::right << std::setprecision(5) << euler.yaw()
+					;
+
+				// Get the Timestamp
+				textfileoutput << " " << std::setw(20) << std::fixed << std::showpoint << std::right << XsTime_timeStampNow(0) << "\n"
+					;
+
+
+				//velocity
+				//XsVector3 velocity = packet.velocity();
+				//textfileoutput << std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[0]
+				//	<< std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[1]
+				//	<< std::setw(15) << std::fixed << std::setprecision(3) << std::showpoint << std::right << velocity[2]
+				//	;
+
+
+				textfileoutput.close();
+
+			}
+
+			std::cout << std::flush;
+		}
+		msgs.clear();
+		XsTime::msleep(0);
+	}
+
+	getch();
+	std::cout << "\n" << std::string(79, '-') << "\n";
+	std::cout << std::endl;
+
+	// Close port
+	std::cout << "Closing port..." << std::endl;
+	device.close();
+
+	std::cout << "Successful exit." << std::endl;
+	std::cout << "Press [ENTER] to continue." << std::endl;
+	std::cin.get();
 
 	return 0;
 }
