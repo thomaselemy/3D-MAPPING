@@ -6,3 +6,7 @@
 **error.txt
 *.o
 *.out
+
+imucapture/error\.txt
+
+mathcreatemap/error\.txt
