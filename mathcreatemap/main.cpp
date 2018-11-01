@@ -65,7 +65,6 @@ int main() {
 
     //opens the files to read/write
     ifstream lidarIFS("lidarData.txt");
-    //ifstream imuIFS("IMU.txt");
     
     print("***Counting lines from input files and creating matrices");
 
@@ -75,7 +74,6 @@ int main() {
     nLidarLines = (nLidarLines - (nLidarLines / 13)) * 2;
     
     auto nGpsLines = (nLidarLines - (12 * (nLidarLines / 13)));
-   // auto nImuLines = LineCount(imuIFS);
 
     //Resets the the file stream pointer to the beginning of the file
     lidarIFS.clear();
@@ -87,16 +85,7 @@ int main() {
 
 	vector<array<double, 50>> lidarData (nLidarLines);
 	vector<array<string, 13>> lidarGPS (nGpsLines);
-	//vector<array<double, 11>> imuData (nImuLines);
 
-    //Angles of the 16 individual lasers are provided by Velodyne documentation.
-    //double laserAngle[16] = { 105, 89, 103, 93, 101, 85, 99, 83, 97, 81, 95, 79, 93, 77, 91, 75 };
-    //double laserAngle[16] = { 15, -1, 13,   3, 11,  -5, 9,  -7, 7, -9, 5,  -11, 3, -13, 1, -15 };
-    //guess: the bottom array is just the top - 90
-    array<double, 16> laserAngle = { 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
-    for (unsigned ctr = 0; ctr < laserAngle.size(); ctr++){
-        laserAngle[ctr] = ConvertToRadians(laserAngle[ctr]);
-    }
 #pragma endregion
 
 #pragma region VARIABLES FOR DATA INPUT
@@ -245,7 +234,7 @@ int main() {
 
     print("DONE");
 
-	georefMath(lidarData, imuData, laserAngle, "trial_.txt");
+	georefMath(lidarData, imuData, "trial_.txt");
 }
 
 

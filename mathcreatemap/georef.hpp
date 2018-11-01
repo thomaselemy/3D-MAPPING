@@ -12,6 +12,6 @@ inline void print(const std::string& s){
 
 void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
 				const std::vector<std::array<double, 11>>& imuData,
-				const std::array<double, 16>& laserAngle, const std::string& output);
+				const std::string& output);
 
 #endif

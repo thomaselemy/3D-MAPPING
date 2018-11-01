@@ -9,10 +9,19 @@
 
 void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
 				const std::vector<std::array<double, 11>>& imuData,
-				const std::array<double, 16>& laserAngle, const std::string& output){
+				const std::string& output){
 
 	std::ofstream ptCloudOFS(output);
 	std::ofstream test("testData.txt");
+
+	//Angles of the 16 individual lasers are provided by Velodyne documentation.
+    //double laserAngle[16] = { 105, 89, 103, 93, 101, 85, 99, 83, 97, 81, 95, 79, 93, 77, 91, 75 };
+    //double laserAngle[16] = { 15, -1, 13,   3, 11,  -5, 9,  -7, 7, -9, 5,  -11, 3, -13, 1, -15 };
+    //guess: the bottom array is just the top - 90
+	std::array<double, 16> laserAngle = { 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
+    for (unsigned ctr = 0; ctr < laserAngle.size(); ctr++){
+        laserAngle[ctr] = ConvertToRadians(laserAngle[ctr]);
+    }
 
 #pragma region VARIABLES FOR GEOREFERENCING MATH
     double lat = 0;
