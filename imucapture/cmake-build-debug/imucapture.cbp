@@ -8,86 +8,616 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/thomas/Desktop/imucapture/cmake-build-debug"/>
+				<Option working_dir="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/thomas/Desktop/imucapture/cmake-build-debug"/>
+				<Option working_dir="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/thomas/Desktop/imucapture/cmake-build-debug"/>
+				<Option working_dir="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="imucapture">
-				<Option output="/home/thomas/Desktop/imucapture/cmake-build-debug/imucapture" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/thomas/Desktop/imucapture/cmake-build-debug"/>
+				<Option output="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/imucapture" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include/xsens"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 imucapture"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 imucapture"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="imucapture/fast">
-				<Option output="/home/thomas/Desktop/imucapture/cmake-build-debug/imucapture" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/thomas/Desktop/imucapture/cmake-build-debug"/>
+				<Option output="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/imucapture" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/include/xsens"/>
+					<Add directory="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 imucapture/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/thomas/Desktop/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 imucapture/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/thomas/Desktop/imucapture/main.cpp">
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/deviceclass.h">
 			<Option target="imucapture"/>
 		</Unit>
-		<Unit filename="/home/thomas/Desktop/imucapture/CMakeLists.txt">
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/enumerateusbdevices.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/int_xsdatapacket.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/iointerface.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/iointerfacefile.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/iprotocolhandler.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/legacydatapacket.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/messagelocation.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/mtwsdidata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/packetfixeddata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/packetstamper.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/protocolhandler.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/rx_tx_log.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/serialinterface.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/streaminterface.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/synclinegmt.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/synclinemk4.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/usbinterface.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/xcommunicationconfig.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/xslibusb.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/xsudev.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xcommunication/xswinusb.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/pstdint.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsanalogindata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsatomicint.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsbaud.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsbaudcode.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsbaudrate.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsbusid.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsbytearray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xscalibrateddata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xscontrolline.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xscopy.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdataformat.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdataidentifier.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdataidentifiervalue.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdatapacket.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdebugcounters.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdeviceid.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdeviceidarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdeviceidlist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsdid.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xseuler.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsexception.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsfile.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsfilepos.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsgpspvtdata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsinforequest.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsint64array.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsintarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsintlist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xslibraryloader.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmalloc.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmath.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmatrix.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmatrix3x3.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmessage.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmessagearray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmessagelist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsmutex.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsoutputconfiguration.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsoutputconfigurationarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsoutputconfigurationlist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsoutputmode.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsoutputsettings.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsplatform.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsportinfo.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsportinfoarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsportinfolist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xspressure.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsquaternion.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrange.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgnsspvtdata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgnsssatinfo.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgpsdop.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgpssol.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgpssvinfo.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrawgpstimeutc.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsresultvalue.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsrssi.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsscrdata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssdidata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssimpleversion.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssnapshot.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssocket.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsstring.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsstringarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsstringstreaming.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncfunction.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncline.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncpolarity.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncrole.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncsetting.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncsettingarray.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xssyncsettinglist.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsthread.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstime.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstimestamp.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstriggerindicationdata.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstypedefs.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstypesconfig.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xstypesdynlib.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsushortvector.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsutctime.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsvector.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsvector3.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsversion.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/include/xsens/xsxbusmessageid.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/deviceclass.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/main.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/enumerateusbdevices.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/int_xsdatapacket.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/iointerface.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/iointerfacefile.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/legacydatapacket.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/mtwsdidata.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/packetfixeddata.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/packetstamper.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/protocolhandler.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/serialinterface.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/synclinegmt.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/synclinemk4.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/usbinterface.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/xslibusb.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/xsudev.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xcommunication/xswinusb.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/datapacket_p.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/datapacket_p.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/resource.h">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsbaud.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsbytearray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xscalibrateddata.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsdatapacket.cpp">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsdeviceid.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsdeviceidarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xseuler.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsfile.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsgpspvtdata.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsint64array.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsintarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xslibraryloader.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmalloc.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmath.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmatrix.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmatrix3x3.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmessage.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsmessagearray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsoutputconfiguration.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsoutputconfigurationarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsportinfo.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsportinfoarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsquaternion.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsrange.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsresultvalue.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsrssi.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssdidata.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssimpleversion.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssnapshot.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssocket.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsstring.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsstringarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssyncsetting.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xssyncsettingarray.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsthread.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xstime.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xstimestamp.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xstriggerindicationdata.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xstypedefs.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xstypesdynlib.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsutctime.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsvector.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsvector3.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/src/xstypes/xsversion.c">
+			<Option target="imucapture"/>
+		</Unit>
+		<Unit filename="/home/ubuntu/3D-MAPPING/imucapture/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

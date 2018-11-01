@@ -1,4 +1,4 @@
-/home/thomas/Downloads/clion-2018.1.5/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/thomas/Desktop/imucapture
+/home/ubuntu/clion-2018.2.5/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/ubuntu/3D-MAPPING/imucapture
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/thomas/Desktop/imucapture/cmake-build-debug
+-- Build files have been written to: /home/ubuntu/3D-MAPPING/imucapture/cmake-build-debug
