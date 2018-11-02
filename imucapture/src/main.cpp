@@ -27,6 +27,7 @@
 */
 
 #include "deviceclass.h"
+#include "conio.h"
 
 #include <xsens/xsportinfoarray.h>
 #include <xsens/xsdatapacket.h>
@@ -217,38 +218,38 @@ int main() {
 				packet.setDeviceId(mtPort.deviceId());
 			}
 
-			//XsVector position = packet.positionLLA();
-			//std::cout << "\r"
-			//	<< "Lat:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[0]
-			//	<< ",Lon:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[1]
-			//	<< ",Alt:" << std::setw(5) << std::fixed << std::setprecision(3) << position[2]
-			//	;
-			//XsVector3 velocity = packet.velocity();
-			//std::cout << "VelN:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[0]
-			//	<< ",VelE:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[1]
-			//	<< ",VelD:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[2]
-			//	;
+			XsVector position = packet.positionLLA();
+			std::cout << "\r"
+				<< "Lat:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[0]
+				<< ",Lon:" << std::setw(5) << std::fixed << std::setprecision(std::numeric_limits<long double>::digits10) << position[1]
+				<< ",Alt:" << std::setw(5) << std::fixed << std::setprecision(3) << position[2]
+				;
+			XsVector3 velocity = packet.velocity();
+			std::cout << "VelN:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[0]
+				<< ",VelE:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[1]
+				<< ",VelD:" << std::setw(7) << std::fixed << std::setprecision(3) << velocity[2]
+				;
 
-			//// Get the quaternion data
-			//XsQuaternion quaternion = packet.orientationQuaternion();
-			//std::cout << "\r"
-			//	<< "W:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.w()
-			//	<< ",X:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.x()
-			//	<< ",Y:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.y()
-			//	<< ",Z:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.z()
-			//	;
+			// Get the quaternion data
+			XsQuaternion quaternion = packet.orientationQuaternion();
+			std::cout << "\r"
+				<< "W:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.w()
+				<< ",X:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.x()
+				<< ",Y:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.y()
+				<< ",Z:" << std::setw(5) << std::fixed << std::setprecision(2) << quaternion.z()
+				;
 
-			//// Convert packet to euler
-			//XsEuler euler = packet.orientationEuler();
-			//std::cout << ",Roll:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.roll()
-			//	<< ",Pitch:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.pitch()
-			//	<< ",Yaw:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.yaw()
-			//	;
+			// Convert packet to euler
+			XsEuler euler = packet.orientationEuler();
+			std::cout << ",Roll:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.roll()
+				<< ",Pitch:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.pitch()
+				<< ",Yaw:" << std::setw(7) << std::fixed << std::setprecision(2) << euler.yaw()
+				;
 
-			//// Get the Timestamp
-			//std::cout << ",msTime:" << std::setw(12) << std::fixed << std::setprecision(2) << XsTime_timeStampNow(0);
+			// Get the Timestamp
+			std::cout << ",msTime:" << std::setw(12) << std::fixed << std::setprecision(2) << XsTime_timeStampNow(0);
 
-			// fstreaming to a text file
+			/*// fstreaming to a text file
 			{
 				std::ofstream textfileoutput;
 				textfileoutput.open("IMU.txt", std::ofstream::out | std::ofstream::app);
@@ -296,7 +297,7 @@ int main() {
 
 				textfileoutput.close();
 
-			}
+			}*/
 
 			std::cout << std::flush;
 		}

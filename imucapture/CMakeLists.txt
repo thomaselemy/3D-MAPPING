@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(imucapture)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(include)
 include_directories(include/xcommunication)
@@ -210,7 +210,9 @@ add_executable(imucapture
         ${xsens_HEADERS}
         ${xstypes_SOURCES}
         include/deviceclass.h
+        include/conio.h
         src/deviceclass.cpp
+        src/conio.c
         src/main.cpp)
 
 target_link_libraries(imucapture ${LIBDL} ${PTHREAD} ${NCURSES} ${TINFO})
