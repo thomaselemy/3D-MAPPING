@@ -11,16 +11,15 @@
 auto LineCount(std::ifstream& file){
     
     using namespace std;
-    unsigned n = 0;
+    unsigned num = 0;
     string s;
-    while (getline(file, s)){ n++; }
-    cout << "Lines counted: " << n << endl;
+    while (getline(file, s)){ num++; }
 	
-	 //Resets the the file stream pointer to the beginning of the file
+	//Resets the the file stream pointer to the beginning of the file
     file.clear();
     file.seekg(0);
     
-    return n;
+    return num;
 }
 
 auto split(const std::string& data, const std::string& delim){
@@ -36,11 +35,11 @@ auto split(const std::string& data, const std::string& delim){
 	return toRet;
 }
 
-auto loadIMUData(std::string file_name){
+auto loadIMUData(const std::string file_name){
 
 	using namespace std;
+	
 	ifstream imuIFS(file_name);
-
 	vector<array<double, 11>> imuData(LineCount(imuIFS));
 	
 	if(!imuIFS){ 
@@ -86,7 +85,7 @@ int main() {
     
     print("Counting lines from input files and creating matrices");
 
-    auto nLidarLines = LineCount(lidarIFS);	
+    const auto nLidarLines = LineCount(lidarIFS);	
     
 #pragma region ARRAY DECLARATIONS
 
@@ -105,7 +104,7 @@ int main() {
     const string TIME_DET = "time=";
     const string GPS_DET = "GPS=";
 
-    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every looping of the while loop.
+    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
     unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
@@ -191,10 +190,7 @@ int main() {
                 lidarData[rowIndex][49] = curTime;
 
                 for (unsigned j = 1; j < 17; j++){
-					//Should these variables be moved to their only usage
-                    //auto sequence_index = i;
-                    //auto data_pt_index = j - 1;
-
+			
                     lidarData[rowIndex][j * 3] = curTime 
                     						+ (55.296 * i) 
                    							+ (2.304 * (j - 1));
@@ -213,7 +209,6 @@ int main() {
                 print("GPS ERROR");
                 break;
             }
-            //gpsTime = stod(cur.substr(12, 6));
 
             lidarGPS[gps_row][0] = cur.substr(12, 6);	//GPS time
             lidarGPS[gps_row][1] = cur.substr(19, 1);	//Validity, A or V
@@ -239,7 +234,7 @@ int main() {
 
 	auto imuData = imu_reader.get();
    
-    print("DONE");
+    print("Done reading files");
 
 	georefMath(lidarData, imuData, "trial_.txt");
 }

@@ -18,28 +18,33 @@ inline auto to_sys_time(const double val){
 	return toRet;
 }
 
+inline auto hour_floor(date::sys_time<std::chrono::milliseconds> imu_time){
+
+	using namespace std::chrono;
+	return imu_time - date::floor<hours>(imu_time);
+}
+
 void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
 				const std::vector<std::array<double, 11>>& imuData,
 				const std::string& output){
 
 	std::ofstream ptCloudOFS(output);
-	//std::ofstream test("testData.txt");
 
 	//Angles of the 16 individual lasers are provided by Velodyne documentation.
-    //double laserAngle[16] = { 105, 89, 103, 93, 101, 85, 99, 83, 97, 81, 95, 79, 93, 77, 91, 75 };
-    //double laserAngle[16] = { 15, -1, 13,   3, 11,  -5, 9,  -7, 7, -9, 5,  -11, 3, -13, 1, -15 };
-    //guess: the bottom array is just the top - 90
-	std::array<double, 16> laserAngle = { 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
-    for (unsigned ctr = 0; ctr < laserAngle.size(); ctr++){
-        laserAngle[ctr] = ConvertToRadians(laserAngle[ctr]);
-    }
+	constexpr std::array<double, 16> documentedAngles = 
+		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
+  
+	std::array<double, 16> laserAngle;
+	
+	std::transform(documentedAngles.begin(), documentedAngles.end(), 
+		laserAngle.begin(), ConvertToRadians);
 
 #pragma region VARIABLES FOR GEOREFERENCING MATH
 
     constexpr auto latOffset = 0;
     constexpr auto lonOffset = 0;
     
-    constexpr auto testTime = 500;
+    constexpr auto testTime = std::chrono::microseconds(500);
     constexpr auto testAngle = 30;
     
     unsigned lRow = 0;			//for traversing LIDAR matrix rows
@@ -48,7 +53,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 #pragma endregion
 
 #pragma region GEOREF MATH
-    print("***Start math");
+    print("Start math");
 				
     for (unsigned imuRow = 0; imuRow < imuData.size(); imuRow++){
 	    //prevents loop from throwing an index oob error
@@ -61,14 +66,11 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
 		//Time stamps needed for time stamp synchronization
         //put the values on a comparable scale
-        auto imuTA = to_sys_time(imuData[imuRow][10]);
-        auto imuTB = to_sys_time(imuData[imuRow + 1][10]);
-
-		using namespace std::chrono;
-        auto imuTA_msPH = imuTA - date::floor<hours>(imuTA);
-        auto imuTB_msPH = imuTB - date::floor<hours>(imuTB);
+        auto imuTA_msPH = hour_floor(to_sys_time(imuData[imuRow][10]));
+        auto imuTB_msPH = hour_floor(to_sys_time(imuData[imuRow + 1][10]));
         
 		using namespace date;
+		using namespace std::chrono;
 		//go to next lidarTime until it's greater than imuTimeA
         while (microseconds(lidarTime) < imuTA_msPH){ 
 			
@@ -91,26 +93,21 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
         
             auto timeFlag = false;
             //will store the row number for which IMU data values to do the georef math with
-			unsigned imuRowSelect;
+			auto imuRowSelect = imuRow + 1;
 			
-			//lidarTime is closer to imuA than imuB
+			//Assume B is closer
+			auto difference = abs(imuTB_msPH - microseconds(lidarTime));
+			
             if (abs(imuTA_msPH - microseconds(lidarTime))
             <= abs(imuTB_msPH - microseconds(lidarTime))) { 
 
+				//lidarTime is closer to imuA than imuB
                	imuRowSelect = imuRow; 
-				//use imuTimeA
-                timeFlag = (abs(imuTA_msPH - microseconds(lidarTime)) < microseconds(testTime));
-
-			//lidarTime is closer to imuB than imuA
-            }else{										
-				//use imuTimeB
-                imuRowSelect = imuRow + 1;	
-
-               	timeFlag = (abs(imuTB_msPH - microseconds(lidarTime)) < microseconds(testTime));
-
+				difference = abs(imuTA_msPH - microseconds(lidarTime));
+         
             }
 
-            if (timeFlag) {
+            if (difference < testTime) {
 
                 //begin pt cloud math
                 auto lat = imuData[imuRowSelect][0];
@@ -155,28 +152,24 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
                 Y1 = X * sin(yaw) + Y * cos(yaw);
                 Z1 = Z;
 
-				int altOffset;
+				constexpr auto altOffset = 0;
                 //Position offset
                 X1 = X1 + lonOffset;
                 Y1 = Y1 - latOffset;
                 Z1 = Z1 + altOffset;
                 
+                using namespace std;
+                ptCloudOFS << setw(12) << right << setprecision(5) << fixed 
+                << X1 << " " << setw(12) << right << setprecision(5) << fixed 
+               	<< Y1 << " " << setw(12) << right << setprecision(5) << fixed 
+                << Z << " " << setw(12) << right << setprecision(3);
+                
                 if (ConvertToDegrees(yaw) > testAngle) {
-                	using namespace std;
-                    ptCloudOFS << setw(12) << right << setprecision(5) << fixed 
-                    << X1 << " " << setw(12) << right << setprecision(5) << fixed 
-                    << Y1 << " " << setw(12) << right << setprecision(5) << fixed 
-                    << Z << " " << setw(12) << right << setprecision(3) << 100 
-                    << endl;
+                	ptCloudOFS << 100 << endl;
                 } else {
-                	using namespace std;
-                    ptCloudOFS << setw(12) << right << setprecision(5) << fixed 
-                    << X1 << " " << setw(12) << right << setprecision(5) << fixed 
-                    << Y1 << " " << setw(12) << right << setprecision(5) << fixed 
-                    << Z << " " << setw(12) << right << setprecision(3) << 0 << endl;
+                	ptCloudOFS << 0 << endl;
                 }
                 //end pt cloud math
-
 
                 //increment lidarTime here
                 lCol += 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
@@ -191,13 +184,11 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
                 lidarTime = lidarData[lRow][lCol];
                 std::cout << "lidartime: " << lidarTime;
-                //test << std::endl;
             }
         }
     }
-	//test.close();
-	ptCloudOFS.close();
-	
+    
 #pragma endregion
-
+    
+	ptCloudOFS.close();
 }
