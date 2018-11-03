@@ -23,6 +23,19 @@ auto LineCount(std::ifstream& file){
     return n;
 }
 
+auto split(const std::string& data, const std::string& delim){
+	
+	std::vector<std::string> toRet;
+	size_t pos, lastPos = 0;
+	
+	while((pos = data.find(delim, lastPos)) != std::string::npos){
+		toRet.push_back(data.substr(lastPos, pos));
+		lastPos = pos + delim.length();
+	}
+	
+	return toRet;
+}
+
 auto loadIMUData(std::string file_name){
 
 	using namespace std;
@@ -42,6 +55,7 @@ auto loadIMUData(std::string file_name){
 	unsigned row = 0;
 	while (getline(imuIFS, cur)){
     
+    	//TODO: Use the split function w/ a certain delimiter
         imuData[row][0] = stod(cur.substr(0, 15));	//latitude
         imuData[row][1] = stod(cur.substr(16, 15));	//longitude
         imuData[row][2] = stod(cur.substr(31, 15));	//altitude
