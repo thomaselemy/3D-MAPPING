@@ -1,11 +1,16 @@
 #include "georef.hpp"
 #include "math.hpp"
-//System libraries
+
+//System libraries 
+//Reading / writing
 #include <iostream>
 #include <fstream>
-#include <vector>
+//Storage
 #include <array>
+#include <vector>
 #include <string>
+//Multi-threading
+#include <thread>
 #include <future>
 
 auto LineCount(std::ifstream& file){
@@ -35,7 +40,7 @@ auto split(const std::string& data, const std::string& delim){
 	return toRet;
 }
 
-auto loadIMUData(const std::string file_name){
+auto loadIMUData(const std::string& file_name){
 
 	using namespace std;
 	

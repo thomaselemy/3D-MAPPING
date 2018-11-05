@@ -34,7 +34,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 	constexpr std::array<double, 16> documentedAngles = 
 		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
   
-	std::array<double, 16> laserAngle;
+	std::array<double, 16> laserAngle{};
 	
 	std::transform(documentedAngles.begin(), documentedAngles.end(), 
 		laserAngle.begin(), ConvertToRadians);
@@ -110,17 +110,18 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
             if (difference < testTime) {
 
                 //begin pt cloud math
-                auto lat = imuData[imuRowSelect][0];
-                auto lon = imuData[imuRowSelect][1];
-                auto alt = imuData[imuRowSelect][2];
+                //Unused commented out
+                //auto lat = imuData[imuRowSelect][0];
+                //auto lon = imuData[imuRowSelect][1];
+                //auto alt = imuData[imuRowSelect][2];
                 auto roll = ConvertToRadians(imuData[imuRowSelect][7]);
                 auto pitch = ConvertToRadians(imuData[imuRowSelect][8]);
                 auto yaw = ConvertToRadians(imuData[imuRowSelect][9]);
                 
                 auto alpha = ConvertToRadians(lidarData[lRow][0] / 100);
                 auto distance = lidarData[lRow][lCol - 2];
-                auto timeStamp = lidarData[lRow][lCol];
-                auto omega = laserAngle[(lCol / 3) - 1];
+                //auto timeStamp = lidarData[lRow][lCol];
+                auto omega = laserAngle.at((lCol / 3) - 1);
 
                 if (distance == 0) {	//skipping the data point if the distance is zero
                     lCol = lCol + 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
@@ -134,12 +135,12 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
                 auto Y = distance * cos(omega) * cos(alpha);
                 auto Z = -distance * sin(omega);
 
-               	auto X1 = X * cos(yaw) - Y * sin(yaw);
-                auto Y1 = X * sin(yaw) + Y * cos(yaw);
+               	//auto X1 = X * cos(yaw) - Y * sin(yaw);
+                //auto Y1 = X * sin(yaw) + Y * cos(yaw);
                
                 //X transform (pitch + y_offset)
-                X1 = X;
-                Y1 = Y * cos(pitch) - Z * sin(pitch);
+                auto X1 = X;
+                auto Y1 = Y * cos(pitch) - Z * sin(pitch);
                 auto Z1 = Y * sin(pitch) + Z * cos(pitch);
 
                 //Y transform (roll)
@@ -150,13 +151,13 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
                 //Z transform (yaw)
                 X1 = X * cos(yaw) - Y * sin(yaw);
                 Y1 = X * sin(yaw) + Y * cos(yaw);
-                Z1 = Z;
+                //Z1 = Z;
 
 				constexpr auto altOffset = 0;
                 //Position offset
-                X1 = X1 + lonOffset;
-                Y1 = Y1 - latOffset;
-                Z1 = Z1 + altOffset;
+                X1 += lonOffset;
+                Y1 -= latOffset;
+                //Z1 += altOffset;
                 
                 using namespace std;
                 ptCloudOFS << setw(12) << right << setprecision(5) << fixed 
