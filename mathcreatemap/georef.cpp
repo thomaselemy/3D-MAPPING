@@ -18,12 +18,6 @@ inline auto to_sys_time(const double val){
 	return toRet;
 }
 
-inline auto hour_floor(date::sys_time<std::chrono::milliseconds> imu_time){
-
-	using namespace std::chrono;
-	return imu_time - date::floor<hours>(imu_time);
-}
-
 void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
 				const std::vector<std::array<double, 11>>& imuData,
 				const std::string& output){
@@ -57,8 +51,8 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 				
     for (unsigned imuRow = 0; imuRow < imuData.size(); imuRow++){
 	    //prevents loop from throwing an index oob error
-        if (imuRow + 1 >= imuData.size() || lRow + 1 >= lidarData.size()) { 
-       		print("IOOB SAVE"); break; 
+        if (lRow + 1 >= lidarData.size()) { 
+       		print("Index Out of Bounds"); break; 
        	} 
 		
         //Might be 20 seconds behind imu data, so add 20 seconds
@@ -66,8 +60,13 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
 		//Time stamps needed for time stamp synchronization
         //put the values on a comparable scale
-        auto imuTA_msPH = hour_floor(to_sys_time(imuData[imuRow][10]));
-        auto imuTB_msPH = hour_floor(to_sys_time(imuData[imuRow + 1][10]));
+        constexpr auto hour_floor = [](auto imu_time){
+			using namespace std::chrono;
+			return imu_time - date::floor<hours>(imu_time);
+		};
+        
+        const auto imuTA_msPH = hour_floor(to_sys_time(imuData[imuRow][10]));
+        const auto imuTB_msPH = hour_floor(to_sys_time(imuData[imuRow + 1][10]));
         
 		using namespace date;
 		using namespace std::chrono;
@@ -79,7 +78,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
             lCol += 3;	
 
 			//lCol has reached the end of the row
-            if (lCol > 48){ 
+            if (lCol >= lidarData[lRow].size()){ 
                 lRow++;
                 lCol = 3;
             }
@@ -87,23 +86,26 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
             lidarTime = lidarData[lRow][lCol];
         }
 
+		//Put here for the auto parameters
+		constexpr auto differ = [](auto imuTime, auto lidarTime){
+			return abs(imuTime - microseconds(lidarTime));
+		};
+
 		//while the lidarTime is between the two imu ts, keep incrementing through lidarTime
 		while (microseconds(lidarTime) >= imuTA_msPH 
 			&& microseconds(lidarTime) < imuTB_msPH){
         
-            auto timeFlag = false;
             //will store the row number for which IMU data values to do the georef math with
 			auto imuRowSelect = imuRow + 1;
 			
 			//Assume B is closer
-			auto difference = abs(imuTB_msPH - microseconds(lidarTime));
+			auto difference = differ(imuTB_msPH, lidarTime);
 			
-            if (abs(imuTA_msPH - microseconds(lidarTime))
-            <= abs(imuTB_msPH - microseconds(lidarTime))) { 
+            if (differ(imuTA_msPH, lidarTime) <= difference) { 
 
 				//lidarTime is closer to imuA than imuB
                	imuRowSelect = imuRow; 
-				difference = abs(imuTA_msPH - microseconds(lidarTime));
+				difference = differ(imuTA_msPH, lidarTime);
          
             }
 

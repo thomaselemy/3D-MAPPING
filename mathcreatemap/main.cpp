@@ -105,6 +105,7 @@ int main() {
 
 #pragma region VARIABLES FOR DATA INPUT
 	const string IMU_SOURCE = "IMU.txt";
+	const string OUTPUT_FILE = "trial_.txt";
     const string ANGLE_DET = "angle=";
     const string TIME_DET = "time=";
     const string GPS_DET = "GPS=";
@@ -241,6 +242,6 @@ int main() {
    
     print("Done reading files");
 
-	georefMath(lidarData, imuData, "trial_.txt");
+	georefMath(lidarData, imuData, OUTPUT_FILE);
 }
 
