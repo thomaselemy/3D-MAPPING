@@ -111,56 +111,46 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
             if (difference < testTime) {
 
-                //begin pt cloud math
-                //Unused commented out
-                //auto lat = imuData[imuRowSelect][0];
-                //auto lon = imuData[imuRowSelect][1];
-                //auto alt = imuData[imuRowSelect][2];
-                auto roll = ConvertToRadians(imuData[imuRowSelect][7]);
-                auto pitch = ConvertToRadians(imuData[imuRowSelect][8]);
-                auto yaw = ConvertToRadians(imuData[imuRowSelect][9]);
-                
-                auto alpha = ConvertToRadians(lidarData[lRow][0] / 100);
                 auto distance = lidarData[lRow][lCol - 2];
-                //auto timeStamp = lidarData[lRow][lCol];
-                auto omega = laserAngle.at((lCol / 3) - 1);
-
+               
                 if (distance == 0) {	//skipping the data point if the distance is zero
-                    lCol = lCol + 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
-                    if (lCol > 48) { lRow++; lCol = 3; }
+                    lCol += 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
+                    if (lCol >= lidarData[lRow].size()) { lRow++; lCol = 3; }
 
                     lidarTime = lidarData[lRow][lCol];
                     continue;
                 }
 
+                //begin pt cloud math
+                auto alpha = ConvertToRadians(lidarData[lRow][0] / 100);
+                auto omega = laserAngle.at((lCol / 3) - 1);
+
                 auto X = distance * sin(alpha) * cos(omega);
                 auto Y = distance * cos(omega) * cos(alpha);
                 auto Z = -distance * sin(omega);
-
-               	//auto X1 = X * cos(yaw) - Y * sin(yaw);
-                //auto Y1 = X * sin(yaw) + Y * cos(yaw);
                
+               	auto pitch = ConvertToRadians(imuData[imuRowSelect][8]);
                 //X transform (pitch + y_offset)
                 auto X1 = X;
                 auto Y1 = Y * cos(pitch) - Z * sin(pitch);
                 auto Z1 = Y * sin(pitch) + Z * cos(pitch);
 
+                auto roll = ConvertToRadians(imuData[imuRowSelect][7]);
                 //Y transform (roll)
                 X = X1 * cos(roll) - Z1 * sin(roll);
                 Y = Y1;
                 Z = -X1 * sin(roll) + Z1 * cos(roll);
 
+                auto yaw = ConvertToRadians(imuData[imuRowSelect][9]);
                 //Z transform (yaw)
                 X1 = X * cos(yaw) - Y * sin(yaw);
                 Y1 = X * sin(yaw) + Y * cos(yaw);
-                //Z1 = Z;
-
+       
 				constexpr auto altOffset = 0;
                 //Position offset
                 X1 += lonOffset;
                 Y1 -= latOffset;
-                //Z1 += altOffset;
-                
+               
                 using namespace std;
                 ptCloudOFS << setw(12) << right << setprecision(5) << fixed 
                 << X1 << " " << setw(12) << right << setprecision(5) << fixed 
@@ -183,10 +173,10 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
             } else {
                 //increment lidarTime here
                 lCol += 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
-                if (lCol > 48) { lRow++; lCol = 3; }
+                if (lCol >= lidarData[lRow].size()) { lRow++; lCol = 3; }
 
                 lidarTime = lidarData[lRow][lCol];
-                std::cout << "lidartime: " << lidarTime;
+                std::cout << "lidartime: " << lidarTime << std::endl;
             }
         }
     }
