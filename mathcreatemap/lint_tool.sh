@@ -18,3 +18,4 @@ echo
 clang-tidy-6.0 $BIG_OPTIONS  | tee -a $FILE
 
 echo Done | tee -a $FILE
+sleep 5

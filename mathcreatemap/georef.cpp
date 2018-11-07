@@ -13,22 +13,20 @@ inline auto to_sys_time(const double val){
 	using ms = duration<double, std::milli>;
 	
     using namespace date;
-    sys_time<milliseconds> toRet {round<milliseconds>(ms{val})};
-    
+    sys_time<milliseconds> toRet(round<milliseconds>(ms{val}));
 	return toRet;
 }
+
+//Angles of the 16 individual lasers are provided by Velodyne documentation.
+constexpr std::array<double, 16> documentedAngles = 
+		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
 
 void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
 				const std::vector<std::array<double, 11>>& imuData,
 				const std::string& output){
 
 	std::ofstream ptCloudOFS(output);
-
-	//Angles of the 16 individual lasers are provided by Velodyne documentation.
-	constexpr std::array<double, 16> documentedAngles = 
-		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
-  
-	std::array<double, 16> laserAngle{};
+	std::array<double, documentedAngles.size()> laserAngle{};
 	
 	std::transform(documentedAngles.begin(), documentedAngles.end(), 
 		laserAngle.begin(), ConvertToRadians);
@@ -39,7 +37,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
     constexpr auto lonOffset = 0;
     
     constexpr auto testTime = std::chrono::microseconds(500);
-    constexpr auto testAngle = 30;
+    constexpr auto testAngle = ConvertToRadians(30);
     
     unsigned lRow = 0;			//for traversing LIDAR matrix rows
     unsigned lCol = 3;			//for traversing LIDAR matrix columns
@@ -49,7 +47,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 #pragma region GEOREF MATH
     print("Start math");
 				
-    for (unsigned imuRow = 0; imuRow < imuData.size(); imuRow++){
+    for (unsigned imuRow = 0; imuRow < imuData.size() - 1; imuRow++){
 	    //prevents loop from throwing an index oob error
         if (lRow + 1 >= lidarData.size()) { 
        		print("Index Out of Bounds"); break; 
@@ -60,7 +58,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
 		//Time stamps needed for time stamp synchronization
         //put the values on a comparable scale
-        constexpr auto hour_floor = [](auto imu_time){
+        const auto hour_floor = [](auto imu_time){
 			using namespace std::chrono;
 			return imu_time - date::floor<hours>(imu_time);
 		};
@@ -87,7 +85,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
         }
 
 		//Put here for the auto parameters
-		constexpr auto differ = [](auto imuTime, auto lidarTime){
+		const auto differ = [](auto imuTime, auto lidarTime){
 			return abs(imuTime - microseconds(lidarTime));
 		};
 
@@ -106,12 +104,11 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 				//lidarTime is closer to imuA than imuB
                	imuRowSelect = imuRow; 
 				difference = differ(imuTA_msPH, lidarTime);
-         
             }
 
             if (difference < testTime) {
 
-                auto distance = lidarData[lRow][lCol - 2];
+                const auto distance = lidarData[lRow][lCol - 2];
                
                 if (distance == 0) {	//skipping the data point if the distance is zero
                     lCol += 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
@@ -121,27 +118,27 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
                     continue;
                 }
 
-                //begin pt cloud math
-                auto alpha = ConvertToRadians(lidarData[lRow][0] / 100);
-                auto omega = laserAngle.at((lCol / 3) - 1);
+                //begin pt cloud math (done in radians)
+                const auto alpha = ConvertToRadians(lidarData[lRow][0] / 100);
+                const auto omega = laserAngle.at((lCol / 3) - 1);
 
                 auto X = distance * sin(alpha) * cos(omega);
                 auto Y = distance * cos(omega) * cos(alpha);
                 auto Z = -distance * sin(omega);
                
-               	auto pitch = ConvertToRadians(imuData[imuRowSelect][8]);
+               	const auto pitch = ConvertToRadians(imuData[imuRowSelect][8]);
                 //X transform (pitch + y_offset)
                 auto X1 = X;
                 auto Y1 = Y * cos(pitch) - Z * sin(pitch);
                 auto Z1 = Y * sin(pitch) + Z * cos(pitch);
 
-                auto roll = ConvertToRadians(imuData[imuRowSelect][7]);
+                const auto roll = ConvertToRadians(imuData[imuRowSelect][7]);
                 //Y transform (roll)
                 X = X1 * cos(roll) - Z1 * sin(roll);
                 Y = Y1;
                 Z = -X1 * sin(roll) + Z1 * cos(roll);
 
-                auto yaw = ConvertToRadians(imuData[imuRowSelect][9]);
+                const auto yaw = ConvertToRadians(imuData[imuRowSelect][9]);
                 //Z transform (yaw)
                 X1 = X * cos(yaw) - Y * sin(yaw);
                 Y1 = X * sin(yaw) + Y * cos(yaw);
@@ -157,7 +154,8 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
                	<< Y1 << " " << setw(12) << right << setprecision(5) << fixed 
                 << Z << " " << setw(12) << right << setprecision(3);
                 
-                if (ConvertToDegrees(yaw) > testAngle) {
+                //Both are in radians
+                if (yaw > testAngle) {
                 	ptCloudOFS << 100 << endl;
                 } else {
                 	ptCloudOFS << 0 << endl;
@@ -166,7 +164,7 @@ void georefMath(const std::vector<std::array<double, 50>>& lidarData,
 
                 //increment lidarTime here
                 lCol += 3;	//the next data point's timestamp is three columns away. Refer to the Matrix organization document
-                if (lCol > 48) { lRow++; lCol = 3; }
+                if (lCol >= lidarData[lRow].size()) { lRow++; lCol = 3; }
 
                 lidarTime = lidarData[lRow][lCol];
 
