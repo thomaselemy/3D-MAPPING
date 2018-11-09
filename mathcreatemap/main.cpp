@@ -45,7 +45,7 @@ auto loadIMUData(const std::string& file_name){
 	using namespace std;
 	
 	ifstream imuIFS(file_name);
-	vector<array<double, 11>> imuData(LineCount(imuIFS));
+	vector<imu_entry> imuData(LineCount(imuIFS));
 	
 	if(!imuIFS){ 
 		cerr << "Could not open file " << file_name << endl;
@@ -60,17 +60,18 @@ auto loadIMUData(const std::string& file_name){
 	while (getline(imuIFS, cur)){
     
     	//TODO: Use the split function w/ a certain delimiter
-        imuData[row][0] = stod(cur.substr(0, 15));	//latitude
-        imuData[row][1] = stod(cur.substr(16, 15));	//longitude
-        imuData[row][2] = stod(cur.substr(31, 15));	//altitude
-        imuData[row][3] = stod(cur.substr(46, 15)); //w
-        imuData[row][4] = stod(cur.substr(61, 15)); //x
-        imuData[row][5] = stod(cur.substr(76, 15)); //y
-        imuData[row][6] = stod(cur.substr(91, 15)); //z
-        imuData[row][7] = stod(cur.substr(106, 15)); //roll
-        imuData[row][8] = stod(cur.substr(121, 15)); //pitch
-        imuData[row][9] = stod(cur.substr(136, 15)); //yaw
-        imuData[row][10] = stod(cur.substr(151, 21)); //time stamp
+        using namespace imu_entry_index;
+        imuData[row][latitude] = stod(cur.substr(0, 15));	//latitude
+        imuData[row][longitude] = stod(cur.substr(16, 15));	//longitude
+        imuData[row][altitude] = stod(cur.substr(31, 15));	//altitude
+        imuData[row][w] = stod(cur.substr(46, 15)); //w
+        imuData[row][x] = stod(cur.substr(61, 15)); //x
+        imuData[row][y] = stod(cur.substr(76, 15)); //y
+        imuData[row][z] = stod(cur.substr(91, 15)); //z
+        imuData[row][roll] = stod(cur.substr(106, 15)); //roll
+        imuData[row][pitch] = stod(cur.substr(121, 15)); //pitch
+        imuData[row][yaw] = stod(cur.substr(136, 15)); //yaw
+        imuData[row][imu_entry_index::time] = stod(cur.substr(151, 21)); //time stamp
 
         row++;
     }
@@ -96,7 +97,7 @@ int main() {
 
 	//Skip every 13th line (which is a timestamp) 
     //then multiply by 2 (each line in the text file takes up two lines matrix)
-	vector<array<double, 50>> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
+	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
 	vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
 
 	print("Done Counting & Forming Matrices");
