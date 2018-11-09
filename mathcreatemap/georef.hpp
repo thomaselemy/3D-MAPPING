@@ -6,6 +6,12 @@
 #include <array>
 #include <string>
 
+//Tasks
+//Get an origin from the first IMU packet
+//Sync IMU and LiDAR coordinates
+//??Math??
+//Point cloud
+
 //Constants for data entry
 namespace imu_entry_index{
 	constexpr auto latitude = 0;

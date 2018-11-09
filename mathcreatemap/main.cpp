@@ -98,7 +98,7 @@ int main() {
 	//Skip every 13th line (which is a timestamp) 
     //then multiply by 2 (each line in the text file takes up two lines matrix)
 	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
-	vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
+	//vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
 
 	print("Done Counting & Forming Matrices");
 
@@ -114,7 +114,7 @@ int main() {
     string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
-    unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
+    //unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
     double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
   
 #pragma endregion
@@ -207,33 +207,9 @@ int main() {
 
         //Seeks GPS_DET at the beginning of a line, stores the entire GPS sentence in a string matrix with each row being it's
         //own sentence. Details are in the VLP-16 documentation and Matrix Organization spreadsheet
-       }else if (cur.substr(0, 4) == GPS_DET) {
-            
-            //Avoid an exception when the lidar capture code has a typo in the GPS line
-            if (cur.substr(0, 8) != "GPS= $GP"){
-            
-                //TODO: Have this continue to gather the GPS data after the system typo
-                print("GPS ERROR");
-                break;
-            }
-
-            lidarGPS[gps_row][0] = cur.substr(12, 6);	//GPS time
-            lidarGPS[gps_row][1] = cur.substr(19, 1);	//Validity, A or V
-            lidarGPS[gps_row][2] = cur.substr(21, 9);	//Current Latitude
-            lidarGPS[gps_row][3] = cur.substr(31, 1);	//N or S
-            lidarGPS[gps_row][4] = cur.substr(33, 10);	//Current Longitude
-            lidarGPS[gps_row][5] = cur.substr(44, 1);	//E or W
-            lidarGPS[gps_row][6] = cur.substr(46, 5);	//Speed in knots
-            lidarGPS[gps_row][7] = cur.substr(52, 5);	//True course
-            lidarGPS[gps_row][8] = cur.substr(58, 6);	//Date Stamp
-            lidarGPS[gps_row][9] = cur.substr(65, 5);	//Variation
-            lidarGPS[gps_row][10] = cur.substr(71, 1);	//E or W
-            lidarGPS[gps_row][11] = cur.substr(73, 4);	//checksum
-            lidarGPS[gps_row][12] = curTime;			//timestamp from LIDAR
-
-            gps_row++;
-
-        }
+       }else if (cur.substr(0, 4) == GPS_DET) {            
+			print("GPS Data Found! I was not supposed to get this!");
+       }
 
     }
 

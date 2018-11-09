@@ -71,8 +71,8 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
 constexpr std::array<double, 16> documentedAngles = 
 		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
 
-void georefMath(const std::vector<std::array<double, 50>>& lidarData, 
-				const std::vector<std::array<double, 11>>& imuData,
+void georefMath(const std::vector<lidar_entry>& lidarData, 
+				const std::vector<imu_entry>& imuData,
 				const std::string& output){
 
 	std::ofstream ptCloudOFS(output);
