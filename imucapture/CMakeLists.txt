@@ -8,22 +8,6 @@ include_directories(include/xcommunication)
 include_directories(include/xsens)
 include_directories(src/xstypes)
 
-find_library(LIBDL
-        NAMES libdl.so
-        PATHS /usr/lib/)
-
-find_library(PTHREAD
-        NAMES libpthread.so.0
-        PATHS /usr/lib/)
-
-find_library(NCURSES
-        NAMES libncurses.so.5
-        /usr/lib/)
-
-find_library(TINFO
-        NAMES libtinfo.so.5
-        /usr/lib/)
-
 set(xcommunication_HEADERS
         include/xcommunication/enumerateusbdevices.h
         include/xcommunication/int_xsdatapacket.h
@@ -215,4 +199,4 @@ add_executable(imucapture
         src/conio.c
         src/main.cpp)
 
-target_link_libraries(imucapture ${LIBDL} ${PTHREAD} ${NCURSES} ${TINFO})
+target_link_libraries(imucapture dl pthread ncurses tinfo)
