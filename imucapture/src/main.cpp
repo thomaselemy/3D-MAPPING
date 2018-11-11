@@ -41,7 +41,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <string>
-#include <fstream>  //std::ofstream
+#include <fstream>
 #include <ctime>
 
 #include <cstdio>
@@ -51,137 +51,28 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-void changemode(int dir) {
-    static struct termios oldt, newt;
-
-    if (dir == 1) {
-        tcgetattr( STDIN_FILENO, &oldt);
-        newt = oldt;
-        newt.c_lflag &= ~( ICANON | ECHO );
-        tcsetattr( STDIN_FILENO, TCSANOW, &newt);
-    } else {
-        tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
-	}
-}
-
-int kbhit () {
-    struct timeval tv;
-    fd_set rdfs;
-
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-
-    FD_ZERO(&rdfs);
-    FD_SET (STDIN_FILENO, &rdfs);
-
-    select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
-    return FD_ISSET(STDIN_FILENO, &rdfs);
-}
+void changemode(int dir);
+int kbhit();
+void device_initialization(DeviceClass &device, XsPortInfo &mtPort);
+XsPortInfo scan_usb_devices();
 
 int main(int argc, char* argv[])
 {
 	DeviceClass device;
 	auto start = clock();
 	XsPortInfo mtPort;
+	mtPort = scan_usb_devices();
 
-	// Scan for connected USB devices
-	std::cout << "Scanning for USB devices..." << std::endl;
-	XsPortInfoArray portInfoArray;
-	xsEnumerateUsbDevices(portInfoArray);
-	if (!portInfoArray.size()) // Can't find device
-	{
-		std::string portName;
-		int baudRate;
-		std::cout << "No USB Motion Tracker found." << std::endl <<
-			std::endl << "Please enter COM port name (eg. /dev/ttyUSB0): " <<
-			std::endl;
-		std::cin >> portName;
-		std::cout << "Please enter baud rate (eg. 115200): ";
-		std::cin >> baudRate;
-
-		XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
-		portInfoArray.push_back(portInfo);
-	}
-
-	// Use the first detected device
-	mtPort = portInfoArray.at(0);
-
-	// Device initialization
 	try {
-		std::cout << "Opening port..." << std::endl;
-		if (!device.openPort(mtPort)) {
-			throw std::runtime_error("Could not open port. Aborting.");
-		}
-		
-		std::cout << "Putting device into configuration mode..." << std::endl;
-		if (!device.gotoConfig()) {
-			throw std::runtime_error("Could not put device into configuration mode. Aborting.");
-		}
-
-		// Request the device Id to check the device type
-		mtPort.setDeviceId(device.getDeviceId());
-
-		// Check if we have an MTi / MTx / MTmk4 device
-		if (!mtPort.deviceId().isMt9c() &&
-			!mtPort.deviceId().isLegacyMtig() &&
-			!mtPort.deviceId().isMtMk4() &&
-			!mtPort.deviceId().isFmt_X000())
-		{
-			throw std::runtime_error("No MTi / MTx / MTmk4 device found. Aborting.");
-		}
-
-		std::cout << "Found a device with id: " << mtPort.deviceId().toString().toStdString() <<
-					 " @ port: "	 << mtPort.portName().toStdString() <<
-					 ", baudrate: "  << mtPort.baudrate() << std::endl;
-
-		// Print information about detected MTi / MTx / MTmk4 device
-		std::cout << "Device: " << device.getProductCode().toStdString() <<
-					 " opened." << std::endl;
-
-		// Configure the device. Note the differences between MTix and MTmk4
-		std::cout << "Configuring the device..." << std::endl;
-		if (mtPort.deviceId().isMt9c() || mtPort.deviceId().isLegacyMtig())
-		{
-			XsOutputMode outputMode = XOM_Orientation; // output orientation data
-			XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion; // output orientation data as quaternion
-
-			// set the device configuration
-			if (!device.setDeviceMode(outputMode, outputSettings))
-				throw std::runtime_error("Could not configure MT device. Aborting.");
-				
-		}
-		else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
-		{
-			XsOutputConfiguration quat(XDI_Quaternion, 100);
-			XsOutputConfigurationArray configArray;
-			configArray.push_back(XsOutputConfiguration(XDI_LatLon | XDI_SubFormatDouble, 100));
-			configArray.push_back(XsOutputConfiguration(XDI_AltitudeEllipsoid, 100));
-			configArray.push_back(XsOutputConfiguration(XDI_Quaternion | XDI_CoordSysNed, 100));
-			configArray.push_back(XsOutputConfiguration(XDI_VelocityXYZ | XDI_CoordSysNed, 100));
-			//configArray.push_back(XsOutputConfiguration(XDI_PositionEcef | XDI_CoordSysNed, 100));
-
-			configArray.push_back(quat);
-
-			if (!device.setOutputConfiguration(configArray))
-				throw std::runtime_error("Could not configure MTmk4 device. Aborting.");
-		}
-		else
-		{
-			throw std::runtime_error("Unknown device while configuring. Aborting.");
-		}
-
-		// Put the device in measurement mode
-		std::cout << "Putting device into measurement mode..." << std::endl;
-		if (!device.gotoMeasurement()) {
-			throw std::runtime_error("Could not put device into measurement mode. Aborting.");
-		}
+		device_initialization(device, mtPort);
 	}
 	catch (std::runtime_error const & error) {
 		std::cout << error.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	catch (...) {
-		std::cout << "An unknown fatal error has occured. Aborting." << std::endl;
+		std::cout << "An unknown fatal error has occured. " <<
+				     "Aborting." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -191,13 +82,13 @@ int main(int argc, char* argv[])
 	XsByteArray data;
 	XsMessageArray msgs;
 
-	while (!kbhit()){
+	while (!kbhit()) {
 		//TODO:Move to chrono
 		auto duration = (clock() - start) / CLOCKS_PER_SEC;
 
 		device.readDataToBuffer(data);
 		device.processBufferedData(data, msgs);
-		for (auto msg : msgs){
+		for (auto msg : msgs) {
 			// Retrieve a packet
 			XsDataPacket packet;
 			auto msgID = msg.getMessageId();
@@ -206,7 +97,10 @@ int main(int argc, char* argv[])
 				lpacket.setMessage(msg);
 				lpacket.setXbusSystem(false);
 				lpacket.setDeviceId(mtPort.deviceId(), 0);
-				lpacket.setDataFormat(XOM_Orientation, XOS_OrientationMode_Quaternion, 0);
+				lpacket.setDataFormat(
+						XOM_Orientation,
+						XOS_OrientationMode_Quaternion,
+						0);
 				XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
 			
 			}else if (msgID == XMID_MtData2) {
@@ -303,7 +197,6 @@ int main(int argc, char* argv[])
 	std::cin.get();
 	std::cout << std::endl << std::string(79, '-') << std::endl;
 
-	// Close port
 	std::cout << "Closing port..." << std::endl;
 	device.close();
 
@@ -312,4 +205,143 @@ int main(int argc, char* argv[])
 	std::cin.get();
 
 	return 0;
+}
+
+
+
+void changemode(int dir)
+{
+    static struct termios oldt, newt;
+
+    if (dir == 1) {
+        tcgetattr( STDIN_FILENO, &oldt);
+        newt = oldt;
+        newt.c_lflag &= ~( ICANON | ECHO );
+        tcsetattr( STDIN_FILENO, TCSANOW, &newt);
+    } else {
+        tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+	}
+}
+
+int kbhit ()
+{
+    struct timeval tv;
+    fd_set rdfs;
+
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+
+    FD_ZERO(&rdfs);
+    FD_SET (STDIN_FILENO, &rdfs);
+
+    select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
+    return FD_ISSET(STDIN_FILENO, &rdfs);
+}
+
+void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
+{
+	std::cout << "Opening port..." << std::endl;
+	if (!device.openPort(mtPort)) {
+		throw std::runtime_error("Could not open port. Aborting.");
+	}
+	
+	std::cout << "Putting device into configuration mode..." << std::endl;
+	if (!device.gotoConfig()) {
+		throw std::runtime_error("Could not put device \
+								  into configuration mode. Aborting.");
+	}
+
+	// Request the device Id to check the device type
+	mtPort.setDeviceId(device.getDeviceId());
+
+	// Check if we have an MTi / MTx / MTmk4 device
+	if (!mtPort.deviceId().isMt9c() &&
+		!mtPort.deviceId().isLegacyMtig() &&
+		!mtPort.deviceId().isMtMk4() &&
+		!mtPort.deviceId().isFmt_X000())
+	{
+		throw std::runtime_error("No MTi / MTx / MTmk4 device found. \
+								  Aborting.");
+	}
+
+	std::cout << "Found a device with id: "
+			  << mtPort.deviceId().toString().toStdString()
+			  << " @ port: "	 << mtPort.portName().toStdString()
+			  << ", baudrate: "  << mtPort.baudrate() << std::endl;
+
+	// Print information about detected MTi / MTx / MTmk4 device
+	std::cout << "Device: " << device.getProductCode().toStdString()
+			  << " opened." << std::endl;
+
+	// Note the differences between MTix and MTmk4
+	std::cout << "Configuring the device..." << std::endl;
+	if (mtPort.deviceId().isMt9c() || mtPort.deviceId().isLegacyMtig())
+	{
+		// output orientation data
+		XsOutputMode outputMode = XOM_Orientation;
+
+		// output orientation data as quaternion
+		XsOutputSettings outputSettings = XOS_OrientationMode_Quaternion;
+
+		// set the device configuration
+		if (!device.setDeviceMode(outputMode, outputSettings))
+			throw std::runtime_error("Could not configure MT device. \
+									  Aborting.");
+			
+	}
+	else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
+	{
+		XsOutputConfiguration quat(XDI_Quaternion, 100);
+		XsOutputConfigurationArray configArray;
+		configArray.push_back(
+			XsOutputConfiguration(XDI_LatLon | XDI_SubFormatDouble, 100)
+		);
+		configArray.push_back(
+			XsOutputConfiguration(XDI_AltitudeEllipsoid, 100)
+		);
+		configArray.push_back(
+			XsOutputConfiguration(XDI_Quaternion | XDI_CoordSysNed, 100)
+		);
+		configArray.push_back(
+			XsOutputConfiguration(XDI_VelocityXYZ | XDI_CoordSysNed, 100)
+		);
+
+		configArray.push_back(quat);
+
+		if (!device.setOutputConfiguration(configArray))
+			throw std::runtime_error("Could not configure MTmk4 device. \
+									  Aborting.");
+	}
+	else
+	{
+		throw std::runtime_error("Unknown device while configuring. Aborting.");
+	}
+
+	std::cout << "Putting device into measurement mode..." << std::endl;
+	if (!device.gotoMeasurement()) {
+		throw std::runtime_error("Could not put device into measurement mode. \
+								  Aborting.");
+	}
+}
+
+XsPortInfo scan_usb_devices() {
+	std::cout << "Scanning for USB devices..." << std::endl;
+	XsPortInfoArray portInfoArray;
+	xsEnumerateUsbDevices(portInfoArray);
+	if (!portInfoArray.size()) // Can't find device
+	{
+		std::string portName;
+		int baudRate;
+		std::cout << "No USB Motion Tracker found." << std::endl << std::endl
+				  << "Enter COM port name (eg. /dev/ttyUSB0): " << std::endl;
+		std::cin >> portName;
+		std::cout << "Enter baud rate (eg. 115200): ";
+		std::cin >> baudRate;
+
+		XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
+		portInfoArray.push_back(portInfo);
+	}
+
+	// Use the first detected device
+	return portInfoArray.at(0);
 }
