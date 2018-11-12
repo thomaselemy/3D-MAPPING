@@ -58,9 +58,9 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort);
 XsPortInfo scan_usb_devices();
 
 void set_message_to_packet(
-			XsDataPacket &packet,
-			XsMessage &msg,
-			XsDeviceId dev_id);
+	XsDataPacket &packet,
+	XsMessage &msg,
+	XsDeviceId dev_id);
 
 inline void
 print_position_to_file(std::ofstream &outfile, XsDataPacket &packet);
@@ -89,8 +89,8 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 	catch (...) {
-		std::cout << "An unknown fatal error has occured. " <<
-				     "Aborting." << std::endl;
+		std::cout << "An unknown fatal error has occured. "
+			<< "Aborting." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -174,7 +174,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 	std::cout << "Putting device into configuration mode..." << std::endl;
 	if (!device.gotoConfig()) {
 		throw std::runtime_error("Could not put device \
-								  into configuration mode. Aborting.");
+			into configuration mode. Aborting.");
 	}
 
 	// Request the device Id to check the device type
@@ -187,17 +187,17 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 		!mtPort.deviceId().isFmt_X000())
 	{
 		throw std::runtime_error("No MTi / MTx / MTmk4 device found. \
-								  Aborting.");
+			Aborting.");
 	}
 
 	std::cout << "Found a device with id: "
-			  << mtPort.deviceId().toString().toStdString()
-			  << " @ port: "	 << mtPort.portName().toStdString()
-			  << ", baudrate: "  << mtPort.baudrate() << std::endl;
+		<< mtPort.deviceId().toString().toStdString()
+		<< " @ port: "	 << mtPort.portName().toStdString()
+		<< ", baudrate: "  << mtPort.baudrate() << std::endl;
 
 	// Print information about detected MTi / MTx / MTmk4 device
 	std::cout << "Device: " << device.getProductCode().toStdString()
-			  << " opened." << std::endl;
+		<< " opened." << std::endl;
 
 	// Note the differences between MTix and MTmk4
 	std::cout << "Configuring the device..." << std::endl;
@@ -212,7 +212,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 		// set the device configuration
 		if (!device.setDeviceMode(outputMode, outputSettings))
 			throw std::runtime_error("Could not configure MT device. \
-									  Aborting.");
+				Aborting.");
 			
 	}
 	else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
@@ -236,7 +236,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 
 		if (!device.setOutputConfiguration(configArray))
 			throw std::runtime_error("Could not configure MTmk4 device. \
-									  Aborting.");
+				Aborting.");
 	}
 	else
 	{
@@ -246,7 +246,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 	std::cout << "Putting device into measurement mode..." << std::endl;
 	if (!device.gotoMeasurement()) {
 		throw std::runtime_error("Could not put device into measurement mode. \
-								  Aborting.");
+			Aborting.");
 	}
 }
 
@@ -260,7 +260,7 @@ XsPortInfo scan_usb_devices()
 		std::string portName;
 		int baudRate;
 		std::cout << "No USB Motion Tracker found." << std::endl << std::endl
-				  << "Enter COM port name (eg. /dev/ttyUSB0): " << std::endl;
+			<< "Enter COM port name (eg. /dev/ttyUSB0): " << std::endl;
 		std::cin >> portName;
 		std::cout << "Enter baud rate (eg. 115200): ";
 		std::cin >> baudRate;
@@ -274,9 +274,9 @@ XsPortInfo scan_usb_devices()
 }
 
 void set_message_to_packet(
-			XsDataPacket &packet,
-			XsMessage &msg,
-			XsDeviceId dev_id)
+	XsDataPacket &packet,
+	XsMessage &msg,
+	XsDeviceId dev_id)
 {
 	auto msgID = msg.getMessageId();
 	if (msgID == XMID_MtData) {
@@ -285,9 +285,9 @@ void set_message_to_packet(
 		lpacket.setXbusSystem(false);
 		lpacket.setDeviceId(dev_id, 0);
 		lpacket.setDataFormat(
-					XOM_Orientation,
-					XOS_OrientationMode_Quaternion,
-					0);
+			XOM_Orientation,
+			XOS_OrientationMode_Quaternion,
+			0);
 		XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
 	} else if (msgID == XMID_MtData2) {
 		packet.setMessage(msg);
@@ -300,11 +300,11 @@ print_position_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsVector position = packet.positionLLA();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
-			<< position[0] << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< position[1] << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< position[2] << " ";
+		<< position[0] << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< position[1] << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< position[2] << " ";
 }
 
 inline void
@@ -312,13 +312,13 @@ print_quaternion_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsQuaternion quaternion = packet.orientationQuaternion();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
-			<< quaternion.w() << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< quaternion.x() << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< quaternion.y() << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< quaternion.z() << " ";
+		<< quaternion.w() << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< quaternion.x() << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< quaternion.y() << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< quaternion.z() << " ";
 }
 
 inline void
@@ -326,16 +326,16 @@ print_euler_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsEuler euler = packet.orientationEuler();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
-			<< euler.roll()  << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< euler.pitch() << " "
-			<< std::setw(15) << std::setprecision(5) << std::fixed
-			<< euler.yaw()   << " ";
+		<< euler.roll()  << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< euler.pitch() << " "
+		<< std::setw(15) << std::setprecision(5) << std::fixed
+		<< euler.yaw()   << " ";
 }
 
 inline void
 print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	outfile << std::setw(21) << std::setprecision(5) << std::fixed
-			<< XsTime_timeStampNow(0);
+		<< XsTime_timeStampNow(0);
 }
