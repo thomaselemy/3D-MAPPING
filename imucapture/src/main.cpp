@@ -51,90 +51,6 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-void changemode(int dir);
-int kbhit();
-
-void device_initialization(DeviceClass &device, XsPortInfo &mtPort);
-XsPortInfo scan_usb_devices();
-
-void set_message_to_packet(
-	XsDataPacket &packet,
-	XsMessage &msg,
-	XsDeviceId dev_id);
-
-inline void
-print_position_to_file(std::ofstream &outfile, XsDataPacket &packet);
-
-inline void
-print_quaternion_to_file(std::ofstream &outfile, XsDataPacket &packet);
-
-inline void
-print_euler_to_file(std::ofstream &outfile, XsDataPacket &packet);
-
-inline void
-print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet);
-
-int main(int argc, char* argv[])
-{
-	DeviceClass device;
-	auto start = clock();
-	XsPortInfo mtPort;
-	mtPort = scan_usb_devices();
-
-	try {
-		device_initialization(device, mtPort);
-	}
-	catch (std::runtime_error const & error) {
-		std::cout << error.what() << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	catch (...) {
-		std::cout << "An unknown fatal error has occured. "
-			<< "Aborting." << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	XsByteArray data;
-	XsMessageArray msgs;
-
-	while (!kbhit()) {
-		//TODO:Move to chrono
-		auto duration = (clock() - start) / CLOCKS_PER_SEC;
-
-		device.readDataToBuffer(data);
-		device.processBufferedData(data, msgs);
-		for (auto msg : msgs) {
-			
-			XsDataPacket packet;
-			set_message_to_packet(packet, msg, mtPort.deviceId());
-			
-			std::ofstream imu_txt;
-			imu_txt.open("IMU.txt", std::ofstream::out | std::ofstream::app);
-			
-			print_position_to_file(imu_txt, packet);
-			print_quaternion_to_file(imu_txt, packet);
-			print_euler_to_file(imu_txt, packet);
-			print_timestamp_to_file(imu_txt, packet);
-
-			imu_txt << std::endl;
-			imu_txt.close();
-		}
-		msgs.clear();
-		XsTime::msleep(0);
-	}
-
-	std::cout << "Closing port..." << std::endl;
-	device.close();
-
-	std::cout << "Successful exit." << std::endl;
-
-	return 0;
-}
-
-
-
-
-
 void changemode(int dir)
 {
     static struct termios oldt, newt;
@@ -149,7 +65,7 @@ void changemode(int dir)
 	}
 }
 
-int kbhit ()
+inline int kbhit ()
 {
     struct timeval tv;
     fd_set rdfs;
@@ -250,7 +166,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 	}
 }
 
-XsPortInfo scan_usb_devices()
+auto scan_usb_devices()
 {
 	std::cout << "Scanning for USB devices..." << std::endl;
 	XsPortInfoArray portInfoArray;
@@ -275,8 +191,8 @@ XsPortInfo scan_usb_devices()
 
 void set_message_to_packet(
 	XsDataPacket &packet,
-	XsMessage &msg,
-	XsDeviceId dev_id)
+	const XsMessage &msg,
+	const XsDeviceId dev_id)
 {
 	auto msgID = msg.getMessageId();
 	if (msgID == XMID_MtData) {
@@ -338,4 +254,63 @@ print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	outfile << std::setw(21) << std::setprecision(5) << std::fixed
 		<< XsTime_timeStampNow(0);
+}
+
+
+
+int main(int argc, char* argv[])
+{
+	DeviceClass device;
+	auto start = clock();
+	auto mtPort = scan_usb_devices();
+
+	try {
+		device_initialization(device, mtPort);
+	}
+	catch (std::runtime_error const & error) {
+		std::cout << error.what() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch (...) {
+		std::cout << "An unknown fatal error has occured. "
+			<< "Aborting." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	XsByteArray data;
+	XsMessageArray msgs;
+
+	while (!kbhit()) {
+		//TODO:Move to chrono
+		auto duration = (clock() - start) / CLOCKS_PER_SEC;
+
+		device.readDataToBuffer(data);
+		device.processBufferedData(data, msgs);
+		for (auto msg : msgs) {
+			
+			XsDataPacket packet;
+			set_message_to_packet(packet, msg, mtPort.deviceId());
+			
+			std::ofstream imu_txt(
+				"IMU.txt",
+				std::ofstream::out | std::ofstream::app);
+			
+			print_position_to_file(imu_txt, packet);
+			print_quaternion_to_file(imu_txt, packet);
+			print_euler_to_file(imu_txt, packet);
+			print_timestamp_to_file(imu_txt, packet);
+
+			imu_txt << std::endl;
+			imu_txt.close();
+		}
+		msgs.clear();
+		XsTime::msleep(0);
+	}
+
+	std::cout << "Closing port..." << std::endl;
+	device.close();
+
+	std::cout << "Successful exit." << std::endl;
+
+	return 0;
 }
