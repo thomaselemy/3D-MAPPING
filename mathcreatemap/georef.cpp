@@ -23,9 +23,9 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
 	//begin pt cloud math (done in radians)
 	const auto alpha = ConvertToRadians(lidar[0] / 100);
 
-	auto X = distance * sin(alpha) * cos(omega);
+	auto X = distance * cos(omega) * sin(alpha);
 	auto Y = distance * cos(omega) * cos(alpha);
-	auto Z = -distance * sin(omega);
+	auto Z = distance * sin(omega);
                
 	const auto pitch = ConvertToRadians(imu[imu_entry_index::pitch]);
 	//X transform (pitch + y_offset)
@@ -65,11 +65,6 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
     }
     //end pt cloud math
 }
-
-
-//Angles of the 16 individual lasers are provided by Velodyne documentation.
-constexpr std::array<double, 16> documentedAngles = 
-		{ 15, -1, 13, 3, 11, -5, 9, -7, 7, -9, 5, -11, 3, -13, 1, -15 };
 
 void georefMath(const std::vector<lidar_entry>& lidarData, 
 				const std::vector<imu_entry>& imuData,

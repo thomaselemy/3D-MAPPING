@@ -15,9 +15,8 @@
 
 auto LineCount(std::ifstream& file){
     
-    using namespace std;
     unsigned num = 0;
-    string s;
+    std::string s;
     while (getline(file, s)){ num++; }
 	
 	//Resets the the file stream pointer to the beginning of the file
@@ -52,9 +51,6 @@ auto loadIMUData(const std::string& file_name){
 		return imuData; 
 	}
 	
-	imuIFS.clear();
-    imuIFS.seekg(0);
-	
 	string cur;
 	unsigned row = 0;
 	while (getline(imuIFS, cur)){
@@ -84,34 +80,13 @@ auto loadIMUData(const std::string& file_name){
 
 int main() {
 
-	using namespace std;
-
-    //opens the files to read/write
-    ifstream lidarIFS("lidarData.txt");
-    
-    print("Counting lines from input files and creating matrices");
-
-    const auto nLidarLines = LineCount(lidarIFS);	
-    
-#pragma region ARRAY DECLARATIONS
-
-	//Skip every 13th line (which is a timestamp) 
-    //then multiply by 2 (each line in the text file takes up two lines matrix)
-	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
-	//vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
-
-	print("Done Counting & Forming Matrices");
-
-#pragma endregion
-
 #pragma region VARIABLES FOR DATA INPUT
-	const string IMU_SOURCE = "IMU.txt";
-	const string OUTPUT_FILE = "trial_.txt";
-    const string ANGLE_DET = "angle=";
-    const string TIME_DET = "time=";
-    const string GPS_DET = "GPS=";
+	const std::string IMU_SOURCE = "IMU.txt";
+	const std::string OUTPUT_FILE = "trial_.txt";
+    const std::string ANGLE_DET = "angle=";
+    const std::string TIME_DET = "time=";
+    const std::string GPS_DET = "GPS=";
 
-    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
     //unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
@@ -121,8 +96,19 @@ int main() {
 
     print("Processing LIDAR data & IMU data");
 
+	using namespace std;
 	auto imu_reader = async(loadIMUData, IMU_SOURCE);
 
+	//opens the files to read/write
+    ifstream lidarIFS("lidarData.txt");
+    
+    const auto nLidarLines = LineCount(lidarIFS);	
+    
+	//Skip every 13th line (which is a timestamp) 
+    //then multiply by 2 (each line in the text file takes up two lines matrix)
+	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
+    
+    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     while (getline(lidarIFS, cur)){
         //Seeks angle_det at the beginning of a line, stores angle value and the following distance and reflectivity points.
         //Interpolates missing angle values, as described in the VLP-16 documentation
@@ -192,7 +178,7 @@ int main() {
 
             for (int i = 23; i >= 0; i--) {
                 
-                const auto rowIndex = (row - 24) + i;
+                const unsigned rowIndex = (row - 24) + i;
                 
                 lidarData[rowIndex][49] = curTime;
 
@@ -203,12 +189,9 @@ int main() {
                    							+ (2.304 * (j - 1));
                 }
             }
-        
 
-        //Seeks GPS_DET at the beginning of a line, stores the entire GPS sentence in a string matrix with each row being it's
-        //own sentence. Details are in the VLP-16 documentation and Matrix Organization spreadsheet
-       }else if (cur.substr(0, 4) == GPS_DET) {            
-			print("GPS Data Found! I was not supposed to get this!");
+       } else {            
+			cout << "This line is useless:" << cur << endl;
        }
 
     }
