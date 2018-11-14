@@ -69,12 +69,14 @@ inline int kbhit ()
 void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 {
 	std::cout << "Opening port..." << std::endl;
-	if (!device.openPort(mtPort)) {
+	if (!device.openPort(mtPort))
+	{
 		throw std::runtime_error("Could not open port. Aborting.");
 	}
 	
 	std::cout << "Putting device into configuration mode..." << std::endl;
-	if (!device.gotoConfig()) {
+	if (!device.gotoConfig())
+	{
 		throw std::runtime_error("Could not put device \
 			into configuration mode. Aborting.");
 	}
@@ -113,8 +115,10 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 
 		// set the device configuration
 		if (!device.setDeviceMode(outputMode, outputSettings))
+		{
 			throw std::runtime_error("Could not configure MT device. \
 				Aborting.");
+		}
 			
 	}
 	else if (mtPort.deviceId().isMtMk4() || mtPort.deviceId().isFmt_X000())
@@ -137,8 +141,10 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 		configArray.push_back(quat);
 
 		if (!device.setOutputConfiguration(configArray))
+		{
 			throw std::runtime_error("Could not configure MTmk4 device. \
 				Aborting.");
+		}
 	}
 	else
 	{
@@ -146,7 +152,8 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 	}
 
 	std::cout << "Putting device into measurement mode..." << std::endl;
-	if (!device.gotoMeasurement()) {
+	if (!device.gotoMeasurement())
+	{
 		throw std::runtime_error("Could not put device into measurement mode. \
 			Aborting.");
 	}
@@ -181,7 +188,8 @@ void set_message_to_packet(
 	const XsDeviceId dev_id)
 {
 	auto msgID = msg.getMessageId();
-	if (msgID == XMID_MtData) {
+	if (msgID == XMID_MtData)
+	{
 		LegacyDataPacket lpacket(1, false);
 		lpacket.setMessage(msg);
 		lpacket.setXbusSystem(false);
@@ -191,7 +199,9 @@ void set_message_to_packet(
 			XOS_OrientationMode_Quaternion,
 			0);
 		XsDataPacket_assignFromLegacyDataPacket(&packet, &lpacket, 0);
-	} else if (msgID == XMID_MtData2) {
+	}
+	else if (msgID == XMID_MtData2)
+	{
 		packet.setMessage(msg);
 		packet.setDeviceId(dev_id);
 	}
@@ -243,7 +253,7 @@ print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
 }
 
 inline void
-print_everything(XsDataPacket &packet)
+print_everything_to_console(XsDataPacket &packet)
 {
 	XsVector position = packet.positionLLA();
 	std::cout << "\r"
@@ -299,14 +309,17 @@ int main(int argc, char* argv[])
 	auto start = clock();
 	auto mtPort = scan_usb_devices();
 
-	try {
+	try
+	{
 		device_initialization(device, mtPort);
 	}
-	catch (std::runtime_error const & error) {
+	catch (std::runtime_error const & error)
+	{
 		std::cout << error.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	catch (...) {
+	catch (...)
+	{
 		std::cout << "An unknown fatal error has occured. "
 			<< "Aborting." << std::endl;
 		exit(EXIT_FAILURE);
@@ -317,13 +330,14 @@ int main(int argc, char* argv[])
 	XsByteArray data;
 	XsMessageArray msgs;
 
-	while (!kbhit()) {
+	while (!kbhit())
+	{
 		auto duration = (clock() - start) / CLOCKS_PER_SEC;
 
 		device.readDataToBuffer(data);
 		device.processBufferedData(data, msgs);
-		for (auto msg : msgs) {
-			
+		for (auto msg : msgs)
+		{
 			XsDataPacket packet;
 			set_message_to_packet(packet, msg, mtPort.deviceId());
 			
@@ -335,7 +349,7 @@ int main(int argc, char* argv[])
 			print_quaternion_to_file(imu_txt, packet);
 			print_euler_to_file(imu_txt, packet);
 			print_timestamp_to_file(imu_txt, packet);
-			print_everything(packet);
+			print_everything_to_console(packet);
 
 			imu_txt << std::endl;
 			imu_txt.close();
