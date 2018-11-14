@@ -12,3 +12,5 @@ mathcreatemap/error\.txt
 *.gch
 
 imucapture/error\.txt
+
+mathcreatemap/lint\.txt

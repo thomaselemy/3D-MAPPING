@@ -1,34 +1,51 @@
 #include "georef.hpp"
 #include "math.hpp"
-//System libraries
+
+//System libraries 
+//Reading / writing
 #include <iostream>
 #include <fstream>
-#include <vector>
+//Storage
 #include <array>
+#include <vector>
 #include <string>
+//Multi-threading
+#include <thread>
 #include <future>
 
 auto LineCount(std::ifstream& file){
     
     using namespace std;
-    unsigned n = 0;
+    unsigned num = 0;
     string s;
-    while (getline(file, s)){ n++; }
-    cout << "Lines counted: " << n << endl;
+    while (getline(file, s)){ num++; }
 	
-	 //Resets the the file stream pointer to the beginning of the file
+	//Resets the the file stream pointer to the beginning of the file
     file.clear();
     file.seekg(0);
     
-    return n;
+    return num;
 }
 
-auto loadIMUData(std::string file_name){
+auto split(const std::string& data, const std::string& delim){
+	
+	std::vector<std::string> toRet;
+	size_t pos, lastPos = 0;
+	
+	while((pos = data.find(delim, lastPos)) != std::string::npos){
+		toRet.push_back(data.substr(lastPos, pos));
+		lastPos = pos + delim.length();
+	}
+	
+	return toRet;
+}
+
+auto loadIMUData(const std::string& file_name){
 
 	using namespace std;
+	
 	ifstream imuIFS(file_name);
-
-	vector<array<double, 11>> imuData(LineCount(imuIFS));
+	vector<imu_entry> imuData(LineCount(imuIFS));
 	
 	if(!imuIFS){ 
 		cerr << "Could not open file " << file_name << endl;
@@ -42,17 +59,19 @@ auto loadIMUData(std::string file_name){
 	unsigned row = 0;
 	while (getline(imuIFS, cur)){
     
-        imuData[row][0] = stod(cur.substr(0, 15));	//latitude
-        imuData[row][1] = stod(cur.substr(16, 15));	//longitude
-        imuData[row][2] = stod(cur.substr(31, 15));	//altitude
-        imuData[row][3] = stod(cur.substr(46, 15)); //w
-        imuData[row][4] = stod(cur.substr(61, 15)); //x
-        imuData[row][5] = stod(cur.substr(76, 15)); //y
-        imuData[row][6] = stod(cur.substr(91, 15)); //z
-        imuData[row][7] = stod(cur.substr(106, 15)); //roll
-        imuData[row][8] = stod(cur.substr(121, 15)); //pitch
-        imuData[row][9] = stod(cur.substr(136, 15)); //yaw
-        imuData[row][10] = stod(cur.substr(151, 21)); //time stamp
+    	//TODO: Use the split function w/ a certain delimiter
+        using namespace imu_entry_index;
+        imuData[row][latitude] = stod(cur.substr(0, 15));	//latitude
+        imuData[row][longitude] = stod(cur.substr(16, 15));	//longitude
+        imuData[row][altitude] = stod(cur.substr(31, 15));	//altitude
+        imuData[row][w] = stod(cur.substr(46, 15)); //w
+        imuData[row][x] = stod(cur.substr(61, 15)); //x
+        imuData[row][y] = stod(cur.substr(76, 15)); //y
+        imuData[row][z] = stod(cur.substr(91, 15)); //z
+        imuData[row][roll] = stod(cur.substr(106, 15)); //roll
+        imuData[row][pitch] = stod(cur.substr(121, 15)); //pitch
+        imuData[row][yaw] = stod(cur.substr(136, 15)); //yaw
+        imuData[row][imu_entry_index::time] = stod(cur.substr(151, 21)); //time stamp
 
         row++;
     }
@@ -72,14 +91,14 @@ int main() {
     
     print("Counting lines from input files and creating matrices");
 
-    auto nLidarLines = LineCount(lidarIFS);	
+    const auto nLidarLines = LineCount(lidarIFS);	
     
 #pragma region ARRAY DECLARATIONS
 
 	//Skip every 13th line (which is a timestamp) 
     //then multiply by 2 (each line in the text file takes up two lines matrix)
-	vector<array<double, 50>> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
-	vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
+	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
+	//vector<array<string, 13>> lidarGPS (nLidarLines - (12 * (nLidarLines / 13)));
 
 	print("Done Counting & Forming Matrices");
 
@@ -87,14 +106,15 @@ int main() {
 
 #pragma region VARIABLES FOR DATA INPUT
 	const string IMU_SOURCE = "IMU.txt";
+	const string OUTPUT_FILE = "trial_.txt";
     const string ANGLE_DET = "angle=";
     const string TIME_DET = "time=";
     const string GPS_DET = "GPS=";
 
-    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every looping of the while loop.
+    string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
-    unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
+    //unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
     double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
   
 #pragma endregion
@@ -177,10 +197,7 @@ int main() {
                 lidarData[rowIndex][49] = curTime;
 
                 for (unsigned j = 1; j < 17; j++){
-					//Should these variables be moved to their only usage
-                    //auto sequence_index = i;
-                    //auto data_pt_index = j - 1;
-
+			
                     lidarData[rowIndex][j * 3] = curTime 
                     						+ (55.296 * i) 
                    							+ (2.304 * (j - 1));
@@ -190,34 +207,9 @@ int main() {
 
         //Seeks GPS_DET at the beginning of a line, stores the entire GPS sentence in a string matrix with each row being it's
         //own sentence. Details are in the VLP-16 documentation and Matrix Organization spreadsheet
-       }else if (cur.substr(0, 4) == GPS_DET) {
-            
-            //Avoid an exception when the lidar capture code has a typo in the GPS line
-            if (cur.substr(0, 8) != "GPS= $GP"){
-            
-                //TODO: Have this continue to gather the GPS data after the system typo
-                print("GPS ERROR");
-                break;
-            }
-            //gpsTime = stod(cur.substr(12, 6));
-
-            lidarGPS[gps_row][0] = cur.substr(12, 6);	//GPS time
-            lidarGPS[gps_row][1] = cur.substr(19, 1);	//Validity, A or V
-            lidarGPS[gps_row][2] = cur.substr(21, 9);	//Current Latitude
-            lidarGPS[gps_row][3] = cur.substr(31, 1);	//N or S
-            lidarGPS[gps_row][4] = cur.substr(33, 10);	//Current Longitude
-            lidarGPS[gps_row][5] = cur.substr(44, 1);	//E or W
-            lidarGPS[gps_row][6] = cur.substr(46, 5);	//Speed in knots
-            lidarGPS[gps_row][7] = cur.substr(52, 5);	//True course
-            lidarGPS[gps_row][8] = cur.substr(58, 6);	//Date Stamp
-            lidarGPS[gps_row][9] = cur.substr(65, 5);	//Variation
-            lidarGPS[gps_row][10] = cur.substr(71, 1);	//E or W
-            lidarGPS[gps_row][11] = cur.substr(73, 4);	//checksum
-            lidarGPS[gps_row][12] = curTime;			//timestamp from LIDAR
-
-            gps_row++;
-
-        }
+       }else if (cur.substr(0, 4) == GPS_DET) {            
+			print("GPS Data Found! I was not supposed to get this!");
+       }
 
     }
 
@@ -225,8 +217,8 @@ int main() {
 
 	auto imuData = imu_reader.get();
    
-    print("DONE");
+    print("Done reading files");
 
-	georefMath(lidarData, imuData, "trial_.txt");
+	georefMath(lidarData, imuData, OUTPUT_FILE);
 }
 
