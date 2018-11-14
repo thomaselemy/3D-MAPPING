@@ -1,28 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(imucapture)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(include)
 include_directories(include/xcommunication)
 include_directories(include/xsens)
 include_directories(src/xstypes)
-
-find_library(LIBDL
-        NAMES libdl.so
-        PATHS /usr/lib/)
-
-find_library(PTHREAD
-        NAMES libpthread.so.0
-        PATHS /usr/lib/)
-
-find_library(NCURSES
-        NAMES libncurses.so.5
-        /usr/lib/)
-
-find_library(TINFO
-        NAMES libtinfo.so.5
-        /usr/lib/)
 
 set(xcommunication_HEADERS
         include/xcommunication/enumerateusbdevices.h
@@ -210,7 +194,9 @@ add_executable(imucapture
         ${xsens_HEADERS}
         ${xstypes_SOURCES}
         include/deviceclass.h
+        include/conio.h
         src/deviceclass.cpp
+        src/conio.c
         src/main.cpp)
 
-target_link_libraries(imucapture ${LIBDL} ${PTHREAD} ${NCURSES} ${TINFO})
+target_link_libraries(imucapture dl pthread ncurses tinfo)
