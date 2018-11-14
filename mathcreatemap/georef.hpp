@@ -12,6 +12,9 @@
 //??Math??
 //Point cloud
 
+//General formula:
+//<Origin> + <Origin Offset> + <Point relative to drone> + <IMU-Lidar offset>
+
 //Constants for data entry
 namespace imu_entry_index{
 	constexpr auto latitude = 0;
