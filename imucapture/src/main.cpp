@@ -242,6 +242,55 @@ print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
 		<< XsTime_timeStampNow(0);
 }
 
+inline void
+print_everything(XsDataPacket &packet)
+{
+	XsVector position = packet.positionLLA();
+	std::cout << "\r"
+		<< "Lat:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< position[0]
+		<< ",Lon:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< position[1]
+		<< ",Alt:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< position[2]
+		<< std::endl;
+	
+	XsVector3 velocity = packet.velocity();
+	std::cout << "VelN:" << std::setw(15) << std::fixed << std::setprecision(5)
+	<< velocity[0]
+		<< ",VelE:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< velocity[1]
+		<< ",VelD:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< velocity[2]
+		<< std::endl;
+
+
+	XsQuaternion quaternion = packet.orientationQuaternion();
+	std::cout << "\r"
+		<< "W:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< quaternion.w()
+		<< ",X:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< quaternion.x()
+		<< ",Y:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< quaternion.y()
+		<< ",Z:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< quaternion.z();
+
+	// Convert packet to euler
+	XsEuler euler = packet.orientationEuler();
+	std::cout << ",Roll:" << std::setw(15) << std::fixed << std::setprecision(5)
+	<< euler.roll()
+		<< ",Pitch:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< euler.pitch()
+		<< ",Yaw:" << std::setw(15) << std::fixed << std::setprecision(5)
+		<< euler.yaw()
+		<< std::endl;
+
+	// Get the Timestamp
+	std::cout << ",msTime:" << std::setw(21) << std::fixed
+	<< std::setprecision(5) << XsTime_timeStampNow(0);
+}
+
 
 
 int main(int argc, char* argv[])
@@ -263,11 +312,12 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	std::cout << "Running..." << std::endl;
+
 	XsByteArray data;
 	XsMessageArray msgs;
 
 	while (!kbhit()) {
-		//TODO:Move to chrono
 		auto duration = (clock() - start) / CLOCKS_PER_SEC;
 
 		device.readDataToBuffer(data);
@@ -285,6 +335,7 @@ int main(int argc, char* argv[])
 			print_quaternion_to_file(imu_txt, packet);
 			print_euler_to_file(imu_txt, packet);
 			print_timestamp_to_file(imu_txt, packet);
+			print_everything(packet);
 
 			imu_txt << std::endl;
 			imu_txt.close();
