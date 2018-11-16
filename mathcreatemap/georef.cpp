@@ -7,14 +7,6 @@
 #include <fstream>
 #include <iomanip>
 
-inline auto to_sys_time(std::chrono::milliseconds val){
-	
-	using namespace std::chrono;
-    using namespace date;
-    sys_time<milliseconds> toRet(val);
-	return toRet;
-}
-
 void point_cloud_math(std::ostream& output, const lidar_entry& lidar, 
 				const imu_data& imu, double omega, double distance){
 	
@@ -61,6 +53,13 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
     //end pt cloud math
 }
 
+constexpr inline date::sys_time<std::chrono::milliseconds> 
+			to_sys_time(std::chrono::milliseconds val){
+	
+    date::sys_time<std::chrono::milliseconds> toRet(val);
+	return toRet;
+}
+
 void georefMath(const std::vector<lidar_entry>& lidarData, 
 				const std::vector<imu_data>& imuData,
 				const std::string& output){
@@ -90,13 +89,12 @@ void georefMath(const std::vector<lidar_entry>& lidarData,
        	} 
 		
         //Might be 20 seconds behind imu data, so add 20 seconds
-        long long lidarTime = lidarData[lRow][lCol] + 20000000l; //microseconds
+        long lidarTime = lidarData[lRow][lCol] + 20000000l; //microseconds
 
 		//Time stamps needed for time stamp synchronization
         //put the values on a comparable scale
         const auto hour_floor = [](auto imu_time){
-			using namespace std::chrono;
-			return imu_time - date::floor<hours>(imu_time);
+			return imu_time - date::floor<std::chrono::hours>(imu_time);
 		};
         
         const auto imuTA_msPH = hour_floor(to_sys_time(
@@ -123,17 +121,16 @@ void georefMath(const std::vector<lidar_entry>& lidarData,
         }
 
 		//Put here for the auto parameter
-		const auto differ = [](auto imuTime, long long lidarTime){
+		const auto differ = [](auto imuTime, long lidarTime){
 			return date::abs(imuTime - std::chrono::microseconds(lidarTime));
 		};
 		
 		//while the lidarTime is between the two imu ts, keep incrementing through lidarTime
 		while (std::chrono::microseconds(lidarTime) >= imuTA_msPH 
 			&& std::chrono::microseconds(lidarTime) < imuTB_msPH){
-        
-            //Store the row number for which IMU data values to do the math with
-			
+
 			//Assume B is closer
+            //Store the row number for which IMU data values to do the math with
 			unsigned imuRowSelect = imuRow + 1;
 			auto difference = differ(imuTB_msPH, lidarTime);
 			
