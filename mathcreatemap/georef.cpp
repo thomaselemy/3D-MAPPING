@@ -7,18 +7,16 @@
 #include <fstream>
 #include <iomanip>
 
-inline auto to_sys_time(const double val){
+inline auto to_sys_time(std::chrono::milliseconds val){
 	
 	using namespace std::chrono;
-	using ms = duration<double, std::milli>;
-	
     using namespace date;
-    sys_time<milliseconds> toRet(round<milliseconds>(ms{val}));
+    sys_time<milliseconds> toRet(val);
 	return toRet;
 }
 
 void point_cloud_math(std::ostream& output, const lidar_entry& lidar, 
-				const imu_entry& imu, double omega, double distance){
+				const imu_data& imu, double omega, double distance){
 	
 	//begin pt cloud math (done in radians)
 	const auto alpha = ConvertToRadians(lidar[0] / 100);
@@ -26,23 +24,20 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
 	auto X = distance * cos(omega) * sin(alpha);
 	auto Y = distance * cos(omega) * cos(alpha);
 	auto Z = distance * sin(omega);
-               
-	const auto pitch = ConvertToRadians(imu[imu_entry_index::pitch]);
+
 	//X transform (pitch + y_offset)
 	auto X1 = X;
-	auto Y1 = Y * cos(pitch) - Z * sin(pitch);
-	auto Z1 = Y * sin(pitch) + Z * cos(pitch);
+	auto Y1 = Y * cos(imu.pitch) - Z * sin(imu.pitch);
+	auto Z1 = Y * sin(imu.pitch) + Z * cos(imu.pitch);
 
-	const auto roll = ConvertToRadians(imu[imu_entry_index::roll]);
 	//Y transform (roll)
-	X = X1 * cos(roll) - Z1 * sin(roll);
+	X = X1 * cos(imu.roll) - Z1 * sin(imu.roll);
 	Y = Y1;
-	Z = -X1 * sin(roll) + Z1 * cos(roll);
+	Z = -X1 * sin(imu.roll) + Z1 * cos(imu.roll);
 
-	const auto yaw = ConvertToRadians(imu[imu_entry_index::yaw]);
 	//Z transform (yaw)
-	X1 = X * cos(yaw) - Y * sin(yaw);
-    Y1 = X * sin(yaw) + Y * cos(yaw);
+	X1 = X * cos(imu.yaw) - Y * sin(imu.yaw);
+    Y1 = X * sin(imu.yaw) + Y * cos(imu.yaw);
        
     constexpr auto latOffset = 0;
     constexpr auto lonOffset = 0;
@@ -58,7 +53,7 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
     << setw(12) << right << setprecision(3);
                 
     //Both are in radians
-    if (yaw > ConvertToRadians(30)) {
+    if (imu.yaw > ConvertToRadians(30)) {
     	output << 100 << endl;
     } else {
 		output << 0 << endl;
@@ -67,7 +62,7 @@ void point_cloud_math(std::ostream& output, const lidar_entry& lidar,
 }
 
 void georefMath(const std::vector<lidar_entry>& lidarData, 
-				const std::vector<imu_entry>& imuData,
+				const std::vector<imu_data>& imuData,
 				const std::string& output){
 
 	std::ofstream ptCloudOFS(output);
@@ -105,16 +100,14 @@ void georefMath(const std::vector<lidar_entry>& lidarData,
 		};
         
         const auto imuTA_msPH = hour_floor(to_sys_time(
-        						imuData[imuRow][imu_entry_index::time]
+        						imuData.at(imuRow).time
         						));
         const auto imuTB_msPH = hour_floor(to_sys_time(
-        						imuData[imuRow + 1][imu_entry_index::time]
+        						imuData.at(imuRow + 1).time
         						));
         
-		using namespace date;
-		using namespace std::chrono;
 		//go to next lidarTime until it's greater than imuTimeA
-        while (microseconds(lidarTime) < imuTA_msPH){ 
+        while (std::chrono::microseconds(lidarTime) < imuTA_msPH){ 
 			
 			//The next data point's timestamp is three columns away. 
 			//Refer to the Matrix organization document
@@ -131,17 +124,17 @@ void georefMath(const std::vector<lidar_entry>& lidarData,
 
 		//Put here for the auto parameter
 		const auto differ = [](auto imuTime, long long lidarTime){
-			return abs(imuTime - microseconds(lidarTime));
+			return date::abs(imuTime - std::chrono::microseconds(lidarTime));
 		};
-
+		
 		//while the lidarTime is between the two imu ts, keep incrementing through lidarTime
-		while (microseconds(lidarTime) >= imuTA_msPH 
-			&& microseconds(lidarTime) < imuTB_msPH){
+		while (std::chrono::microseconds(lidarTime) >= imuTA_msPH 
+			&& std::chrono::microseconds(lidarTime) < imuTB_msPH){
         
             //Store the row number for which IMU data values to do the math with
 			
 			//Assume B is closer
-			auto imuRowSelect = imuRow + 1;
+			unsigned imuRowSelect = imuRow + 1;
 			auto difference = differ(imuTB_msPH, lidarTime);
 			
             if (differ(imuTA_msPH, lidarTime) <= difference) { 

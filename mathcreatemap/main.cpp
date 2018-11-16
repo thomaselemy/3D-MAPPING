@@ -13,7 +13,7 @@
 #include <thread>
 #include <future>
 
-auto LineCount(std::ifstream& file){
+unsigned LineCount(std::ifstream& file){
     
     unsigned num = 0;
     std::string s;
@@ -43,33 +43,31 @@ auto loadIMUData(const std::string& file_name){
 
 	using namespace std;
 	
+	vector<imu_data> imuData{};
+
 	ifstream imuIFS(file_name);
-	vector<imu_entry> imuData(LineCount(imuIFS));
-	
 	if(!imuIFS){ 
 		cerr << "Could not open file " << file_name << endl;
-		return imuData; 
 	}
 	
 	string cur;
-	unsigned row = 0;
 	while (getline(imuIFS, cur)){
-    
-    	//TODO: Use the split function w/ a certain delimiter
-        using namespace imu_entry_index;
-        imuData[row][latitude] = stod(cur.substr(0, 15));	//latitude
-        imuData[row][longitude] = stod(cur.substr(16, 15));	//longitude
-        imuData[row][altitude] = stod(cur.substr(31, 15));	//altitude
-        imuData[row][w] = stod(cur.substr(46, 15)); //w
-        imuData[row][x] = stod(cur.substr(61, 15)); //x
-        imuData[row][y] = stod(cur.substr(76, 15)); //y
-        imuData[row][z] = stod(cur.substr(91, 15)); //z
-        imuData[row][roll] = stod(cur.substr(106, 15)); //roll
-        imuData[row][pitch] = stod(cur.substr(121, 15)); //pitch
-        imuData[row][yaw] = stod(cur.substr(136, 15)); //yaw
-        imuData[row][imu_entry_index::time] = stod(cur.substr(151, 21)); //time stamp
-
-        row++;
+     
+        double lat = stod(cur.substr(0, 15));
+        double lon = stod(cur.substr(16, 15));
+        double alt = stod(cur.substr(31, 15));
+        
+        double pitch = stod(cur.substr(121, 15));
+        double yaw = stod(cur.substr(136, 15));
+        double roll = stod(cur.substr(106, 15));
+        
+        long time = stol(cur.substr(151, 21));
+        imuData.push_back({lat, lon, alt, 
+        	ConvertToRadians(pitch), 
+        	ConvertToRadians(yaw), 
+        	ConvertToRadians(roll), 
+        	std::chrono::milliseconds(time)
+        });
     }
     
     imuIFS.close();
@@ -80,27 +78,28 @@ auto loadIMUData(const std::string& file_name){
 
 int main() {
 
-#pragma region VARIABLES FOR DATA INPUT
+	const std::string LIDAR_SOURCE = "lidarData.txt";
 	const std::string IMU_SOURCE = "IMU.txt";
 	const std::string OUTPUT_FILE = "trial_.txt";
     const std::string ANGLE_DET = "angle=";
     const std::string TIME_DET = "time=";
-    const std::string GPS_DET = "GPS=";
 
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
-    //unsigned gps_row = 0;	//Row value for the lidarGPS two-dimensional array.
     double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
   
-#pragma endregion
-
-    print("Processing LIDAR data & IMU data");
-
 	using namespace std;
+    cout << "Processing two data streams: " << endl 
+    << "\tLIDAR data from " << LIDAR_SOURCE << endl
+    << "\tIMU data from " << IMU_SOURCE << endl;
+	
 	auto imu_reader = async(loadIMUData, IMU_SOURCE);
 
 	//opens the files to read/write
-    ifstream lidarIFS("lidarData.txt");
+    ifstream lidarIFS(LIDAR_SOURCE);
+    if(!lidarIFS){
+    	cerr << "Could not open file " << LIDAR_SOURCE << endl;
+    }
     
     const auto nLidarLines = LineCount(lidarIFS);	
     
@@ -198,7 +197,7 @@ int main() {
 
 	print("Waiting for IMU Data");
 
-	auto imuData = imu_reader.get();
+	const auto imuData = imu_reader.get();
    
     print("Done reading files");
 
