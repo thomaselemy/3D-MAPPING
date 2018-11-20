@@ -51,6 +51,31 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
+/*
+TODO:
+	-Move main function into a function that can be called from another main function
+	-Create function that can output a packet. Packet data handling depends on whether the program will be multithreaded or not:
+		-If multithreaded: looping function of this program will need to be blocked when packets are created
+		-If not multithreaded: looping function can just poll whether it needs to give a packet or not
+	  -Packet will very likely be a struct due to time packet being int64_t rather than double unlike all the other data, although it can be put into
+	   an array if the data is cast to a double (probably not preferrable, however, due to possible precision rounding errors)
+*/
+
+struct imu
+{
+	double latitude;
+	double longitude;
+	double altitude;
+	double quaternion_w;
+	double quaternion_x;
+	double quaternion_y;
+	double quaternion_z;
+	double roll;
+	double pitch;
+	double yaw;
+	int64_t time;
+};
+
 inline int kbhit ()
 {
     struct timeval tv;
