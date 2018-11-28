@@ -407,13 +407,3 @@ void IMU::run()
 
 	std::cout << "IMU: Successful exit." << std::endl;
 }
-
-int main(int argc, char **argv)
-{
-	IMU imu;
-	imu.init("//dev/ttyUSB0");
-
-	imu.run();
-
-	return 0;
-}
