@@ -4,7 +4,9 @@ This is a simple MAVLink to UART interface example for *nix systems that can all
 This example will receive one MAVLink message and send one MAVLink message.
 
 Building
+
 $ cd c_uart_interface_example/
+
 $ make
 
 Hardware Setup
@@ -19,4 +21,5 @@ You have to pick a port name, try searching for it with
 
 
 $ ls /dev/ttyACM* 
+
 $ ls /dev/ttyUSB*
