@@ -195,6 +195,7 @@ add_executable(imucapture
         ${xstypes_SOURCES}
         include/deviceclass.h
         include/conio.h
+	include/imu.h
         src/deviceclass.cpp
         src/conio.c
         src/main.cpp)

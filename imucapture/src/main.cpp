@@ -26,6 +26,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "imu.h"
 #include "deviceclass.h"
 #include "conio.h"
 
@@ -48,6 +49,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/time.h>
 
@@ -61,22 +63,7 @@ TODO:
 	   an array if the data is cast to a double (probably not preferrable, however, due to possible precision rounding errors)
 */
 
-struct imu
-{
-	double latitude;
-	double longitude;
-	double altitude;
-	double quaternion_w;
-	double quaternion_x;
-	double quaternion_y;
-	double quaternion_z;
-	double roll;
-	double pitch;
-	double yaw;
-	int64_t time;
-};
-
-inline int kbhit ()
+inline int IMU::kbhit()
 {
     struct timeval tv;
     fd_set rdfs;
@@ -91,7 +78,37 @@ inline int kbhit ()
     return FD_ISSET(STDIN_FILENO, &rdfs);
 }
 
-void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
+void IMU::init(const std::string &port, int baud_rate = 115200)
+{
+	std::cout << "IMU: Port is set to " << port << std::endl;
+	std::cout << "IMU: Baud rate is set to " << baud_rate << std::endl;
+	
+	XsPortInfoArray portInfoArray;
+	
+	XsPortInfo portInfo(port, XsBaud::numericToRate(baud_rate));
+	portInfoArray.push_back(portInfo);
+
+	// Use the first detected device
+	mtPort = portInfoArray.at(0);
+
+	try
+	{
+		device_initialization();
+	}
+	catch (const std::runtime_error &error)
+	{
+		std::cout << "IMU: " << error.what() << std::endl;
+		throw;
+	}
+	catch (...)
+	{
+		std::cout << "IMU: An unknown fatal error has occured. "
+			<< "Aborting." << std::endl;
+		throw;
+	}
+}
+
+void IMU::device_initialization()
 {
 	std::cout << "Opening port..." << std::endl;
 	if (!device.openPort(mtPort))
@@ -184,30 +201,7 @@ void device_initialization(DeviceClass &device, XsPortInfo &mtPort)
 	}
 }
 
-auto scan_usb_devices()
-{
-	std::cout << "Scanning for USB devices..." << std::endl;
-	XsPortInfoArray portInfoArray;
-	xsEnumerateUsbDevices(portInfoArray);
-	if (!portInfoArray.size()) // Can't find device
-	{
-		std::string portName;
-		int baudRate;
-		std::cout << "No USB Motion Tracker found." << std::endl << std::endl
-			<< "Enter COM port name (eg. /dev/ttyUSB0): " << std::endl;
-		std::cin >> portName;
-		std::cout << "Enter baud rate (eg. 115200): ";
-		std::cin >> baudRate;
-
-		XsPortInfo portInfo(portName, XsBaud::numericToRate(baudRate));
-		portInfoArray.push_back(portInfo);
-	}
-
-	// Use the first detected device
-	return portInfoArray.at(0);
-}
-
-void set_message_to_packet(
+void IMU::set_message_to_packet(
 	XsDataPacket &packet,
 	const XsMessage &msg,
 	const XsDeviceId dev_id)
@@ -233,7 +227,7 @@ void set_message_to_packet(
 }
 
 inline void
-print_position_to_file(std::ofstream &outfile, XsDataPacket &packet)
+IMU::print_position_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsVector position = packet.positionLLA();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
@@ -245,7 +239,7 @@ print_position_to_file(std::ofstream &outfile, XsDataPacket &packet)
 }
 
 inline void
-print_quaternion_to_file(std::ofstream &outfile, XsDataPacket &packet)
+IMU::print_quaternion_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsQuaternion quaternion = packet.orientationQuaternion();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
@@ -259,7 +253,7 @@ print_quaternion_to_file(std::ofstream &outfile, XsDataPacket &packet)
 }
 
 inline void
-print_euler_to_file(std::ofstream &outfile, XsDataPacket &packet)
+IMU::print_euler_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	XsEuler euler = packet.orientationEuler();
 	outfile << std::setw(15) << std::setprecision(5) << std::fixed
@@ -271,14 +265,14 @@ print_euler_to_file(std::ofstream &outfile, XsDataPacket &packet)
 }
 
 inline void
-print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
+IMU::print_timestamp_to_file(std::ofstream &outfile, XsDataPacket &packet)
 {
 	outfile << std::setw(21) << std::setprecision(5) << std::fixed
 		<< XsTime_timeStampNow(0);
 }
 
 inline void
-print_everything_to_console(XsDataPacket &packet)
+IMU::print_everything_to_console(XsDataPacket &packet)
 {
 	XsVector position = packet.positionLLA();
 	std::cout << "\r"
@@ -326,31 +320,11 @@ print_everything_to_console(XsDataPacket &packet)
 	<< std::setprecision(5) << XsTime_timeStampNow(0);
 }
 
-
-
-int main(int argc, char* argv[])
+void IMU::run()
 {
-	DeviceClass device;
 	auto start = clock();
-	auto mtPort = scan_usb_devices();
 
-	try
-	{
-		device_initialization(device, mtPort);
-	}
-	catch (std::runtime_error const & error)
-	{
-		std::cout << error.what() << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	catch (...)
-	{
-		std::cout << "An unknown fatal error has occured. "
-			<< "Aborting." << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	std::cout << "Running..." << std::endl;
+	std::cout << "IMU: Running..." << std::endl;
 
 	XsByteArray data;
 	XsMessageArray msgs;
@@ -383,10 +357,18 @@ int main(int argc, char* argv[])
 		XsTime::msleep(0);
 	}
 
-	std::cout << "Closing port..." << std::endl;
+	std::cout << "IMU: Closing port..." << std::endl;
 	device.close();
 
-	std::cout << "Successful exit." << std::endl;
+	std::cout << "IMU: Successful exit." << std::endl;
+}
+
+int main(int argc, char **argv)
+{
+	IMU imu;
+	imu.init("//dev/ttyUSB0");
+
+	imu.run();
 
 	return 0;
 }
