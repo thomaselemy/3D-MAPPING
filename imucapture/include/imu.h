@@ -12,6 +12,21 @@
 #include <pthread.h>
 #include <mutex>
 
+struct IMU_data
+{
+	double latitude;
+	double longitude;
+	double altitude;
+	double quaternion_w;
+	double quaternion_x;
+	double quaternion_y;
+	double quaternion_z;
+	double roll;
+	double pitch;
+	double yaw;
+	int64_t time;
+};
+
 class IMU
 {
 public:
@@ -23,6 +38,8 @@ public:
             const XsMessage &msg,
             const XsDeviceId dev_id);
     void run();
+
+    void get_data(IMU_data &retriever);
 
     inline void
     print_position_to_file(std::ofstream &outfile, XsDataPacket &packet);
@@ -42,21 +59,9 @@ private:
     DeviceClass device;
     XsPortInfo mtPort;
     IMU_data data;
-};
 
-struct IMU_data
-{
-	double latitude;
-	double longitude;
-	double altitude;
-	double quaternion_w;
-	double quaternion_x;
-	double quaternion_y;
-	double quaternion_z;
-	double roll;
-	double pitch;
-	double yaw;
-	int64_t time;
+    inline void
+    set_data(XsDataPacket &packet);
 };
 
 #endif // IMU_H

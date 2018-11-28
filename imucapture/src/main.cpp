@@ -320,6 +320,55 @@ IMU::print_everything_to_console(XsDataPacket &packet)
 	<< std::setprecision(5) << XsTime_timeStampNow(0);
 }
 
+void IMU::get_data(IMU_data &retriever) {
+	/*
+	data_lock.lock(); // Will block calling thread if locked
+	
+	// Data here
+
+	data_lock.unlock();
+	*/
+
+	if (data_lock.try_lock()) { // Will not block calling thread if locked
+		retriever.latitude = data.latitude;
+		retriever.longitude = data.longitude;
+		retriever.altitude = data.altitude;
+		retriever.quaternion_w = data.quaternion_w;
+		retriever.quaternion_x = data.quaternion_x;
+		retriever.quaternion_y = data.quaternion_y;
+		retriever.quaternion_z = data.quaternion_z;
+		retriever.roll = data.roll;
+		retriever.pitch = data.pitch;
+		retriever.yaw = data.yaw;
+		retriever.time = data.time;
+
+		data_lock.unlock();
+	}
+}
+
+inline void
+IMU::set_data(XsDataPacket &packet) {
+	XsVector position = packet.positionLLA();
+	XsQuaternion quaternion = packet.orientationQuaternion();
+	XsEuler euler = packet.orientationEuler();
+
+	if (data_lock.try_lock()) {
+		data.latitude = position[0];
+		data.longitude = position[1];
+		data.altitude = position[2];
+		data.quaternion_w = quaternion.w();
+		data.quaternion_x = quaternion.x();
+		data.quaternion_y = quaternion.y();
+		data.quaternion_z = quaternion.z();
+		data.roll = euler.roll();
+		data.pitch = euler.pitch();
+		data.yaw = euler.yaw();
+		data.time = XsTime_timeStampNow(0);
+
+		data_lock.unlock();
+	}
+}
+
 void IMU::run()
 {
 	auto start = clock();
@@ -344,11 +393,7 @@ void IMU::run()
 				"IMU.txt",
 				std::ofstream::out | std::ofstream::app);
 			
-			print_position_to_file(imu_txt, packet);
-			print_quaternion_to_file(imu_txt, packet);
-			print_euler_to_file(imu_txt, packet);
-			print_timestamp_to_file(imu_txt, packet);
-			print_everything_to_console(packet);
+			set_data(packet);
 
 			imu_txt << std::endl;
 			imu_txt.close();
