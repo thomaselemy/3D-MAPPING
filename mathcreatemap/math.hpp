@@ -13,6 +13,10 @@ constexpr inline auto ConvertToDegrees(const double angle){
     return (angle / PI) * 180;
 }
 
+constexpr inline double lerp_value(double start, double end, double percent){
+	return start + ((end-start)*percent);
+}
+
 constexpr inline double lerp_percent(long long start, long long end, 
 									long long current){
 	return static_cast<double>(current - start) / (end - start);
@@ -43,7 +47,5 @@ struct vector3{
 inline vector3 lerp(vector3 start, vector3 end, double percent){
 	return start + ((end - start) * percent);
 }
-
-
 
 #endif

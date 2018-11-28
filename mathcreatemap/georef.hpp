@@ -2,6 +2,7 @@
 #define _GEOREF
 
 #include "math.hpp"
+#include "data.hpp"
 
 #include <iostream>
 #include <vector>
@@ -21,28 +22,6 @@
 inline void print(const std::string& s){
     std::cout << s << std::endl;
 }
-
-//Angles of the 16 individual lasers are provided by Velodyne documentation.
-constexpr std::array<double, 16> documentedAngles = 
-		{ -15, 1, -13, -3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15 };
-
-struct imu_data{
-	double latitude, longitude, altitude;
-	double pitch, yaw, roll;
-	std::chrono::milliseconds time;
-};
-
-struct lidar_data{
-	double distance, omega, alpha;
-	std::chrono::milliseconds time;
-	
-	operator vector3(){
-		double X = distance * cos(omega) * sin(alpha);
-		double Y = distance * cos(omega) * cos(alpha);
-		double Z = distance * sin(omega);
-		return {X, Y, Z};
-	}
-};
 
 //BEGIN OLD WAY
 

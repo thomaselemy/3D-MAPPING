@@ -107,6 +107,16 @@ int main() {
     //then multiply by 2 (each line in the text file takes up two lines matrix)
 	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
     
+    
+    /*
+   {
+   	angle= azimuth
+   	dist[0]  reflec[0] {0..32}
+   }12
+   
+   time
+    */
+   
     string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     while (getline(lidarIFS, cur)){
         //Seeks angle_det at the beginning of a line, stores angle value and the following distance and reflectivity points.
