@@ -1,5 +1,6 @@
-#include "georef.hpp"
-#include "math.hpp"
+#include "new_georef.hpp"
+//#include "math.hpp"
+#include "data.hpp"
 
 //System libraries 
 //Reading / writing
@@ -9,6 +10,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <chrono>
 //Multi-threading
 #include <thread>
 #include <future>
@@ -26,7 +28,7 @@ unsigned LineCount(std::ifstream& file){
     return num;
 }
 
-auto split(const std::string& data, const std::string& delim){
+std::vector<std::string> split(const std::string& data, const std::string& delim){
 	
 	std::vector<std::string> toRet;
 	size_t pos, lastPos = 0;
@@ -78,11 +80,11 @@ auto loadIMUData(const std::string& file_name){
 
 int main() {
 
-	const std::string LIDAR_SOURCE = "lidarData.txt";
+	const std::string LIDAR_SOURCE = "lidar_data.txt";
 	const std::string IMU_SOURCE = "IMU.txt";
 	const std::string OUTPUT_FILE = "trial_.txt";
     const std::string ANGLE_DET = "angle=";
-    const std::string TIME_DET = "time=";
+    const std::string TIME_DET = "time =";
 
     unsigned row = 0;		//Row value for the lidarData two-dimensional array.
     unsigned col = 0;		//Column value "										".
@@ -101,12 +103,7 @@ int main() {
     	cerr << "Could not open file " << LIDAR_SOURCE << endl;
     }
     
-    const auto nLidarLines = LineCount(lidarIFS);	
-    
-	//Skip every 13th line (which is a timestamp) 
-    //then multiply by 2 (each line in the text file takes up two lines matrix)
-	vector<lidar_entry> lidarData ((nLidarLines - (nLidarLines / 13)) * 2);
-    
+	vector<lidar_data> lidarData(LineCount(lidarIFS)/12);
     
     /*
    {
@@ -117,99 +114,48 @@ int main() {
    time
     */
    
+   constexpr std::chrono::milliseconds default_time(-1);
+   
+	size_t unused_lines = 0;   
     string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     while (getline(lidarIFS, cur)){
-        //Seeks angle_det at the beginning of a line, stores angle value and the following distance and reflectivity points.
-        //Interpolates missing angle values, as described in the VLP-16 documentation
-        if (cur.substr(0, 6) == ANGLE_DET){
-        	//Load the angle value
-            lidarData[row][col] = stod(cur.substr(6, 11));
-
-            unsigned cursor = 0;
-            for (unsigned i = 1; i < 96; i++) {
-                col++;
-				
-				//Indicates the end of one sequence of lazer firings
-                if (i == 49){ 
-                	//Go down one row for the next set of distance+reflectivity values
-                    row++;
-                    
-                    //Do not use 0 b/c that is where the interpolated result will be stored	
-                    col = 1;	
-
-                    //azimuth interpolation
-                    //Check to avoid access violation error or index out of bound error
-                    if (row >= 3){	
-                    
-                    	//360 * 100
-                    	constexpr auto magicVal = 36000;
-                        const auto azi1 = lidarData[row - 3][0];
-                        auto azi3 = lidarData[row - 1][0];
-
-                        if (azi3 < azi1){
-                            azi3 += magicVal;
-                        }
-
-                        auto azi2 = (azi1 + azi3) / 2;
-
-						//account for rollover. values are not to exceed 35999.
-                        if (azi2 >= magicVal) {
-                            azi2 -= magicVal;
-                        }
-						
-						//assign the missing angle value with the interpolated one
-                        lidarData[row - 2][0] = azi2; 
-                    }
-                }
-
-				//This is to avoid any column reserved for time stamps. 
-				//See the lidarData Matrix Organization spreadsheet
-                if (i % 3 != 0){ 
-                	//To move through the text file value by value 
-                	//11 characters apart, offset 18 to not read the first item
-                    //Getting distance value
-                    lidarData[row][col] = 
-                    				stod(cur.substr(18 + (11 * cursor), 11)); 
-                    cursor++;
-                }
-            }
-            row++;
-            
-            //Reset to 0. 
-            //when it reads an angle value next, col will be set to the first column
-            col = 0; 
         
-        /*Seeks time_det at the beginning of a line, 
-        stores the time value and calculates the exact time for each data point, 
-        as described in the VLP-16 documentation*/
-        }else if (cur.substr(0, 5) == TIME_DET){
-            curTime = stod(cur.substr(5, 11));
-
-            for (int i = 23; i >= 0; i--) {
-                
-                const unsigned rowIndex = (row - 24) + i;
-                
-                lidarData[rowIndex][49] = curTime;
-
-                for (unsigned j = 1; j < 17; j++){
-			
-                    lidarData[rowIndex][j * 3] = curTime 
-                    						+ (55.296 * i) 
-                   							+ (2.304 * (j - 1));
-                }
+        if (cur.substr(0, ANGLE_DET.size()) == ANGLE_DET){
+        	
+        	lidar_data current;
+        	current.alpha = std::stod(cur.substr(ANGLE_DET.size()));
+        	
+        	for(size_t i = 0; i < current.distance.size(); i++){
+        		lidarIFS >> current.distance[i] >> current.reflectivity[i]; 
+        	}
+        	
+        	current.time = default_time;
+        	
+        	lidarData.push_back(current);
+        	
+		}else if (cur.substr(0, TIME_DET.size()) == TIME_DET){
+            
+            long val = std::stol(cur.substr(TIME_DET.size()));
+            
+            size_t pos = lidarData.size()-1;
+            while(lidarData[pos].time == default_time){
+            	lidarData[pos].time = std::chrono::milliseconds(val);
+            	pos--;
             }
 
-       } else {            
+		} else if(!cur.empty()){            
 			cout << "This line is useless:" << cur << endl;
-       }
+			unused_lines++;
+		}
 
     }
 
-	print("Waiting for IMU Data");
+	std::cout << "Unused Lines: " << unused_lines << std::endl;
+	std::cout << "Waiting for IMU Data" << std::endl;
 
 	const auto imuData = imu_reader.get();
    
-    print("Done reading files");
+	std::cout << "Done reading files" << std::endl;
 
 	georefMath(lidarData, imuData, OUTPUT_FILE);
 }

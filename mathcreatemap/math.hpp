@@ -2,8 +2,9 @@
 #define _MATH_MINE
 
 #include <cmath>
+#include <ostream>
 
-constexpr auto PI = 3.141592653589793238463;
+constexpr double PI = 3.141592653589793238463;
 
 constexpr inline auto ConvertToRadians(const double angle){
     return (angle * PI) / 180;
@@ -43,6 +44,11 @@ struct vector3{
 		z *= rhs;
 	}
 };
+
+inline std::ostream& operator<<(std::ostream& lhs, const vector3& rhs){
+	lhs << '(' << rhs.x << ", " << rhs.y << ", " << rhs.z << ')';
+	return lhs;
+}
 
 inline vector3 lerp(vector3 start, vector3 end, double percent){
 	return start + ((end - start) * percent);

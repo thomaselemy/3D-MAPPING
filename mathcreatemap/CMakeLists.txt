@@ -3,6 +3,6 @@ project(mathcreatemap)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(mathcreatemap main.cpp georef.cpp math.hpp georef.hpp)
+add_executable(mathcreatemap main.cpp new_georef.cpp math.hpp new_georef.hpp data.hpp)
 
 target_link_libraries(mathcreatemap pthread)

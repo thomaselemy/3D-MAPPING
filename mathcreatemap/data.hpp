@@ -7,7 +7,7 @@
 #include <chrono>
 
 //Angles of the 16 individual lasers are provided by Velodyne documentation.
-constexpr std::array<double, 16> documentedAngles = 
+constexpr std::array<double, 16> documented_angles = 
 		{ -15, 1, -13, -3, -11, 5, -9, 7, -7, 9, -5, 11, -3, 13, -1, 15 };
 
 struct imu_data{
@@ -17,7 +17,7 @@ struct imu_data{
 };
 
 //Does not work if flown near the international date line or either pole
-imu_data lerp_imu(const imu_data& start, const imu_data& end, double percent){
+inline imu_data lerp_imu(const imu_data& start, const imu_data& end, double percent){
 	imu_data toRet;
 	
 	toRet.latitude = lerp_value(start.latitude, end.latitude, percent);
@@ -33,8 +33,7 @@ imu_data lerp_imu(const imu_data& start, const imu_data& end, double percent){
 	return toRet;
 }
 
-double haversine_dist(const imu_data& start, 
-											const imu_data& end){
+inline double haversine_dist(const imu_data& start, const imu_data& end){
 	
 	auto sine_squared = [](double val) -> double {
 		return sin(val) * sin(val);
@@ -53,7 +52,7 @@ double haversine_dist(const imu_data& start,
 }
 
 //x = longitude, y = latitude
-vector3 between_imu_meters(const imu_data& start, const imu_data& end){
+inline vector3 between_imu_meters(const imu_data& start, const imu_data& end){
 	imu_data fake_x_start; //x (longitude) is the same as the start
 	fake_x_start.latitude = end.latitude;
 	fake_x_start.longitude = start.longitude;
@@ -72,7 +71,7 @@ vector3 between_imu_meters(const imu_data& start, const imu_data& end){
 
 struct lidar_data{
 	std::array<double, 32> distance, reflectivity;
-	double omega, alpha;
+	double alpha; //azimuth
 	std::chrono::milliseconds time;
 };
 
