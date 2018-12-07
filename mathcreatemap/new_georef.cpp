@@ -13,7 +13,8 @@ void georefMath(const std::vector<lidar_data>& lidar,
 
 	imu_data first_used;
 	
-	std::vector<vector3> point_cloud(lidar.size() * 16);
+	std::vector<vector3> point_cloud(lidar.size() * 32);
+	std::vector<double> intensities(lidar.size() * 32);
 	
 	for(size_t lidar_index = 0; lidar_index < lidar.size(); lidar_index++){
 	
@@ -62,14 +63,17 @@ void georefMath(const std::vector<lidar_data>& lidar,
 			double Z = dist * sin(omega);
 			
 			point_cloud.push_back(from_origin + vector3{X, Y, Z});
+			intensities.push_back(lidar[lidar_index].reflectivity[laser_num]);
 		}
 	
 	}	
 
 	std::ofstream out_file(filename_out);
 
+	size_t index = 0;
 	for(vector3 point : point_cloud){
-		out_file << point << std::endl;
+		out_file << point << " | " << intensities[index] << std::endl;
+		index++;
 	}
 
 	out_file.close();

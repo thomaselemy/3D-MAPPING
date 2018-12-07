@@ -49,7 +49,9 @@ auto loadIMUData(const std::string& file_name){
 
 	ifstream imuIFS(file_name);
 	if(!imuIFS){ 
-		cerr << "Could not open file " << file_name << endl;
+		const string error_msg = string("Could not open file ") + file_name;
+		cerr << error_msg << endl;
+		throw error_msg;
 	}
 	
 	string cur;
@@ -77,30 +79,16 @@ auto loadIMUData(const std::string& file_name){
     return imuData;
 }
 
-
-int main() {
-
-	const std::string LIDAR_SOURCE = "lidar_data.txt";
-	const std::string IMU_SOURCE = "IMU.txt";
-	const std::string OUTPUT_FILE = "trial_.txt";
-    const std::string ANGLE_DET = "angle=";
-    const std::string TIME_DET = "time =";
-
-    unsigned row = 0;		//Row value for the lidarData two-dimensional array.
-    unsigned col = 0;		//Column value "										".
-    double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
-  
-	using namespace std;
-    cout << "Processing two data streams: " << endl 
-    << "\tLIDAR data from " << LIDAR_SOURCE << endl
-    << "\tIMU data from " << IMU_SOURCE << endl;
+auto loadLidarData(const std::string& file_name){
 	
-	auto imu_reader = async(loadIMUData, IMU_SOURCE);
-
+	using namespace std;
+	
 	//opens the files to read/write
-    ifstream lidarIFS(LIDAR_SOURCE);
+    ifstream lidarIFS(file_name);
     if(!lidarIFS){
-    	cerr << "Could not open file " << LIDAR_SOURCE << endl;
+    	const string error_msg = string("Could not open file ") + file_name;
+		cerr << error_msg << endl;
+		throw error_msg;
     }
     
 	vector<lidar_data> lidarData(LineCount(lidarIFS)/12);
@@ -114,8 +102,11 @@ int main() {
    time
     */
    
-   constexpr std::chrono::milliseconds default_time(-1);
-   
+   constexpr chrono::milliseconds default_time(-1);
+  
+   const std::string ANGLE_DET = "angle=";
+    const std::string TIME_DET = "time =";
+    
 	size_t unused_lines = 0;   
     string cur;			//Stores a line from the LIDAR text file. It is replaced with the following line during every loop.
     while (getline(lidarIFS, cur)){
@@ -123,7 +114,7 @@ int main() {
         if (cur.substr(0, ANGLE_DET.size()) == ANGLE_DET){
         	
         	lidar_data current;
-        	current.alpha = std::stod(cur.substr(ANGLE_DET.size()));
+        	current.alpha = stod(cur.substr(ANGLE_DET.size()));
         	
         	for(size_t i = 0; i < current.distance.size(); i++){
         		lidarIFS >> current.distance[i] >> current.reflectivity[i]; 
@@ -135,11 +126,11 @@ int main() {
         	
 		}else if (cur.substr(0, TIME_DET.size()) == TIME_DET){
             
-            long val = std::stol(cur.substr(TIME_DET.size()));
+            long val = stol(cur.substr(TIME_DET.size()));
             
             size_t pos = lidarData.size()-1;
             while(lidarData[pos].time == default_time){
-            	lidarData[pos].time = std::chrono::milliseconds(val);
+            	lidarData[pos].time = chrono::milliseconds(val);
             	pos--;
             }
 
@@ -150,13 +141,39 @@ int main() {
 
     }
 
-	std::cout << "Unused Lines: " << unused_lines << std::endl;
-	std::cout << "Waiting for IMU Data" << std::endl;
+	cout << "Unused Lines: " << unused_lines << endl;
+	return lidarData;
+}
 
-	const auto imuData = imu_reader.get();
-   
-	std::cout << "Done reading files" << std::endl;
+int main() {
 
-	georefMath(lidarData, imuData, OUTPUT_FILE);
+	const std::string LIDAR_SOURCE = "lidar_data.txt";
+	const std::string IMU_SOURCE = "IMU.txt";
+	const std::string OUTPUT_FILE = "trial_.txt";
+    
+    unsigned row = 0;		//Row value for the lidarData two-dimensional array.
+    unsigned col = 0;		//Column value "										".
+    double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
+  
+	using namespace std;
+    cout << "Processing two data streams: " << endl 
+    << "\tLIDAR data from " << LIDAR_SOURCE << endl
+    << "\tIMU data from " << IMU_SOURCE << endl;
+	
+	auto imu_reader = async(loadIMUData, IMU_SOURCE);
+	auto lidar_reader = async(loadLidarData, LIDAR_SOURCE);
+
+	try{
+		const auto lidarData = lidar_reader.get();
+		const auto imuData = imu_reader.get();
+		
+		cout << "Done reading files" << endl;
+
+		georefMath(lidarData, imuData, OUTPUT_FILE);
+   	}catch(...){
+   		cerr << "Error Found!" << endl;
+   		exit(0);
+   	}
+	
 }
 
