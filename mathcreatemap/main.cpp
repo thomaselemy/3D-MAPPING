@@ -147,13 +147,13 @@ auto loadLidarData(const std::string& file_name){
 
 int main() {
 
-	const std::string LIDAR_SOURCE = "lidar_data.txt";
-	const std::string IMU_SOURCE = "IMU.txt";
-	const std::string OUTPUT_FILE = "trial_.txt";
+	static const std::string LIDAR_SOURCE = "lidar_data.txt";
+	static const std::string IMU_SOURCE = "IMU.txt";
+	static const std::string OUTPUT_FILE = "trial_.txt";
     
-    unsigned row = 0;		//Row value for the lidarData two-dimensional array.
-    unsigned col = 0;		//Column value "										".
-    double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
+    //unsigned row = 0;		//Row value for the lidarData two-dimensional array.
+    //unsigned col = 0;		//Column value "										".
+    //double curTime = 0;	//Stores the value of the most recently encountered LIDAR time value.
   
 	using namespace std;
     cout << "Processing two data streams: " << endl 
