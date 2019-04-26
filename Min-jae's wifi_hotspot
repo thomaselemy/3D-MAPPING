@@ -1,0 +1,213 @@
+#!/bin/bash
+
+###
+# Heya! Glad you decided to open up this script. Everything is organized into
+# their respective functions. Install, uninstall, and help are contained in
+# their own (possibly large) functions. In case you're wondering, this script
+# is not the pinnacle of best programming practices.
+# 
+# If you're familiar with Linux and its utilities:
+# This script is seriously just an interactive frontend for nmcli (Network
+# Manager). When using the install parameter, this script will just run
+# 
+#	nmcli d wifi hotspot (and other options here)
+#
+# and then
+#
+#	nmcli c modify $HOTSPOT_NAME connection.autoconnect yes
+#
+# Curious about something? Want to send insults? Email me at minjaeyi@cpp.edu
+# and hope that my email is still working.
+###
+
+function check_utilities() {
+	if [[ ! $(command -v nmcli) ]]; then
+                echo "Network Manager is not installed."
+                echo "This script is simply a terminal frontend for nmcli, hence why Network Manager is required to run this script."
+                exit 1
+        fi
+}
+
+
+function print_usage() {
+	echo "Usage: hotspot-setup <install | uninstall | manually | help>"
+}
+
+function print_help() {
+	print_usage
+
+	echo ""
+	echo "If your hotspot is already set up but you forgot how to start it back up again, run"
+
+	echo -e "\n    nmcli c up \$NAME\n"
+
+	echo "where \$NAME is the name of the hotspot that was created prior."
+	echo "If you don't remember the name, you can check by running"
+
+	echo -e "\n    nmcli c\n"
+
+	exit 0
+}
+
+function setup() {
+	check_utilities
+
+	echo "Enter the name you want the hotspot to have:"
+	read HOTSPOT_NAME
+
+	if [[ "$HOTSPOT_NAME" == "" ]]; then
+		echo "Hotspot name cannot be empty."
+		exit 1
+	fi
+
+	echo "Enter hotspot password (hidden):"
+	read -s HOTSPOT_PASS
+	echo ""
+
+	if [[ "$HOTSPOT_PASS" == "" ]]; then
+		echo "Hotspot password cannot be empty."
+		exit 1
+	fi
+
+	if [[ ${#HOTSPOT_PASS} < 8 ]]; then
+		echo "Hotspot password must be 8 characters or greater."
+		exit 1
+	fi
+
+	if [[ "$HOTSPOT_PASS" == *\ * ]]; then
+		echo "This script will not allow space character for the password."
+		echo "If you want spaces in your password, manually create your hotspot."
+		exit 1
+	fi
+
+	echo "Enter your device's interface name (enter nothing if you want to auto-scan for your device):"
+	read IFNAME
+
+
+	if [[ "$IFNAME" == "" ]]; then
+		echo "The script will attempt to scan for your wifi card you want as the hotspot."
+		read -p "If your wifi card is plugged in right now, remove it and press enter. If it's not plugged in, just press enter:"
+
+		FIRST_I=$(ip l | awk -- '{print $2}' | sed -n 1~2p | sed 's/://')
+		FIRST_U=$(lsusb | awk -- '{print $6}')
+	
+		echo ""
+		read -p "Plug in your wifi card and press enter:"
+		echo "Please wait..."
+		echo ""
+	
+		sleep 5 # Sleep to allow card to initialize completely once plugged in
+		SECOND_I=$(ip l | awk -- '{print $2}' | sed -n 1~2p | sed 's/://')
+		SECOND_U=$(lsusb | awk -- '{print $6}')
+		IFNAME=$(echo -e "$FIRST_I\n$SECOND_I" | sort -n | uniq -u)
+		USB_ID=$(echo -e "$FIRST_U\n$SECOND_U" | sort -n | uniq -u)
+	
+		if [[ $IFNAME == "" || $USB_ID == "" ]]; then
+			echo "Failed to detect wifi card."
+			echo "Either try this script again or create the hotspot manually."
+			echo "Some instructions can be had by running this script with the \"manually\" parameter."
+			exit 1
+		fi
+	
+		read -p "Your device's interface name is $IFNAME with ID $USB_ID. Press enter to continue."
+		echo ""
+		VENDOR_ID=$(echo $USB_ID | sed 's/:/ /' | awk -- '{print $1}')
+		PRODUCT_ID=$(echo $USB_ID | sed 's/:/ /' | awk -- '{print $2}')
+	else
+		echo ""
+	fi
+
+
+	echo "Creating hotspot connection"
+	nmcli d wifi hotspot ifname "$IFNAME" con-name "$HOTSPOT_NAME" ssid "$HOTSPOT_NAME" password "$HOTSPOT_PASS"
+
+	if [[ $? != 0 ]]; then
+		echo ""
+		echo "Error occurred in creating hotspot."
+		echo "Either try this script again or create the hotspot manually."
+		echo "Some instructions can be had by running this script with the \"manually\" parameter."
+		exit 1
+	fi
+	
+	echo "Setting hotspot to startup automagically"
+	nmcli c modify "$HOTSPOT_NAME" connection.autoconnect yes
+	
+	echo ""
+	echo "Finished setting up."
+}
+
+function remove() {
+	check_utilities
+
+	echo "Enter your hotspot connection name (if you don't know its name, run \"nmcli c\"):"
+	read HOTSPOT_NAME
+
+	nmcli c delete "$HOTSPOT_NAME"
+
+	if [[ $? == 0 ]]; then
+		echo ""
+		echo "Successfully deleted hotspot."
+	fi
+}
+
+function manual() {
+	echo "These are the instructions on how to manually create the hotspot yourself"
+	echo "in case this script doesn't work or you don't want to use the utilities"
+	echo "that this script requires to run."
+	echo ""
+	echo "These instructions explain how to do it using Network Manager, but you"
+	echo "may use whatever utility you want, however. If not using"
+	echo "Network Manager, just know that the wifi card should be set to ap mode"
+	echo "or \"access point\" mode."
+	echo ""
+	echo "Run"
+
+	echo -e "\n    ip link\n"
+
+	echo "To get the name of the interfaces. You will need this to target the"
+	echo "specific interface to set it as the hotspot. Since it is a wireless"
+	echo "card, it will start with \"wl\" in its name."
+	echo ""
+	echo "After that, run"
+
+	echo -e "\n    nmcli d wifi hotspot ifname \$IFNAME con-name \$NAME ssid \$NAME password \$PASSWORD\n"
+
+	echo "replacing the variables with their appropriate values."
+
+	echo ""
+	echo "    \$IFNAME   = Name of interface to use as hotspot (gotten from ip link command above)"
+	echo "    \$NAME     = Name that hotspot will have (and connection name for Network Manager)"
+	echo "    \$PASSWORD = Password of hotspot (recommended to have a decent password)"
+	echo ""
+	
+	echo "Your hotspot should be set up and ready to connect to. When you"
+	echo "disconnect the wifi module, the connection will deactivate automatically."
+	echo "If you want to start it up again, run"
+
+	echo -e "\n    nmcli c up \$NAME\n"
+
+	echo "and the hotspot should be active again for the same wifi module. Your connection will NOT"
+	echo "start up automatically when your card is plugged in, so you will have to run that every"
+	echo "time you want the hotspot to become active again. If you want it to auto-start, look up"
+	echo "nmcli commands to modify the connection to autostart. Or you can look in this script."
+	echo "That works too."
+}
+
+
+case $1 in
+	"install")
+		setup
+		;;
+	"uninstall")
+		remove
+		;;
+	"manually")
+		manual
+		;;
+	"help")
+		print_help
+		;;
+	*)
+		print_usage
+		;;
+esac
